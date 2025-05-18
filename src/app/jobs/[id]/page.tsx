@@ -5,12 +5,10 @@ import {
   BriefcaseIcon, 
   ClockIcon, 
   CurrencyDollarIcon, 
-  UserGroupIcon, 
-  BuildingOfficeIcon, 
-  CalendarIcon, 
   MapPinIcon, 
+  BuildingOfficeIcon, 
+  CalendarIcon,  
   GlobeAltIcon, 
-  AcademicCapIcon, 
   IdentificationIcon, 
   ClipboardDocumentListIcon 
 } from '@heroicons/react/24/outline';
@@ -21,7 +19,7 @@ id: string;
   title: string;
   slug: string;
   description: string;
-  applyLink: string;
+  applylink: string;
   responsibilities: string;
   qualifications: string;
   requirements: string;
@@ -172,7 +170,7 @@ export default async function JobDetail({
       "applicationContact": {
         "@type": "ContactPoint",
         "contactType": "HR",
-        "url": job.applyLink,
+        "url": job.applylink,
       },
     };
 
@@ -233,7 +231,7 @@ export default async function JobDetail({
                   <h1 className="text-3xl sm:text-3xl font-bold text-gray-800">{job.title}</h1>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-gray-600 text-xs sm:text-sm">
                     <div className="flex items-center gap-1">
-                      <UserGroupIcon className="h-4 w-4 text-gray-500" />
+                      <MapPinIcon className="h-4 w-4 text-gray-500" />
                       <span>{job.city}, {job.country}</span>
                       <BriefcaseIcon className="h-4 w-4 sm:h-4 sm:w-5 text-gray-600" />
                       <span> {job.employment_type}</span>
@@ -246,14 +244,18 @@ export default async function JobDetail({
                 </div>
                 {/* Right side: Apply Button */}
                 <div className="flex items-start justify-end">
-                  <a
-                    href={job.applyLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-4 py-2 bg-green-800 text-white rounded-md hover:bg-green-700 transition-colors text-xs sm:text-sm whitespace-nowrap"
-                  >
-                    Apply Online
-                  </a>
+                  {job && job.applylink ? (
+                    <a
+                      href={job.applylink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 sm:py-3 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center"
+                    >
+                      Apply Online
+                    </a>
+                  ) : (
+                    <span className="text-red-500">No application link available</span>
+                  )}
                 </div>
               </div>
               <div className="w-full border-t border-gray-300"></div>
@@ -315,7 +317,7 @@ export default async function JobDetail({
                 {/* Pair 4: Location and Employment Type */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="flex items-center gap-2">
-                    <UserGroupIcon className="h-5 w-5 text-gray-500" />
+                    <MapPinIcon className="h-5 w-5 text-gray-500" />
                     <span>
                       <strong>Location :</strong> {job.city || "N/A"}
                     </span>

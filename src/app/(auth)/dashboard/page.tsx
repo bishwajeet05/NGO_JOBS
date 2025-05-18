@@ -230,6 +230,19 @@ export default function AdminPanel() {
             </div>
             <div className="grid grid-cols-1 gap-4 mt-4">
               <div>
+                <label className="block text-sm font-medium">URL</label>
+                <textarea
+                  {...register("applyLink", { required: true })}
+                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+                  rows={1}
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    target.style.height = "auto";
+                    target.style.height = `${target.scrollHeight}px`;
+                  }}
+                />
+              </div>
+              <div>
                 <label className="block text-sm font-medium">Description</label>
                 <textarea
                   {...register("description", { required: true })}
@@ -323,20 +336,6 @@ export default function AdminPanel() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 mt-4">
-              <div>
-                <label className="block text-sm font-medium">Organisation/Company Name</label>
-                <textarea
-                  {...register("organization_type", { required: true })}
-                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = "auto";
-                    target.style.height = `${target.scrollHeight}px`;
-                  }}
-                />
-              </div>
-            </div>
           </div>
 
           {/* Salary */}
@@ -419,6 +418,19 @@ export default function AdminPanel() {
                 <label className="block text-sm font-medium">Organization</label>
                 <textarea
                   {...register("organization", { required: true })}
+                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                  rows={1}
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    target.style.height = "auto";
+                    target.style.height = `${target.scrollHeight}px`;
+                  }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium">Organisation/Company Name</label>
+                <textarea
+                  {...register("organization_type", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                   rows={1}
                   onInput={(e) => {
