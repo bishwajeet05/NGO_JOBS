@@ -64,7 +64,37 @@ export default function AdminPanel() {
   useEffect(() => {
     if (editingJob) {
       Object.entries(editingJob).forEach(([key, value]) => {
-        setValue(key as keyof Job, value);
+        if (key === "date_posted" && typeof value === "string" && value) {
+          try {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+              const formattedDate = date.toISOString().split("T")[0];
+              setValue("date_posted", formattedDate);
+            } else {
+              console.warn(`Invalid date for date_posted: ${value}`);
+              setValue("date_posted", "");
+            }
+          } catch (error) {
+            console.warn(`Error parsing date_posted: ${value}`, error);
+            setValue("date_posted", "");
+          }
+        } else if (key === "valid_through" && typeof value === "string" && value) {
+          try {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+              const formattedDateTime = date.toISOString().slice(0, 16);
+              setValue("valid_through", formattedDateTime);
+            } else {
+              console.warn(`Invalid date for valid_through: ${value}`);
+              setValue("valid_through", "");
+            }
+          } catch (error) {
+            console.warn(`Error parsing valid_through: ${value}`, error);
+            setValue("valid_through", "");
+          }
+        } else {
+          setValue(key as keyof Job, value);
+        }
       });
     }
   }, [editingJob, setValue]);
@@ -232,8 +262,9 @@ export default function AdminPanel() {
                   <option value="Volunteer">Volunteer</option>
                   <option value="Consultant / Freelance">Consultant / Freelance</option>
                   <option value="Fellowship">Fellowship</option>
+                  <option value="Scholarship">Scholarship</option>
                   <option value="Temporary / Project-based">Temporary / Project-based</option>
-                  <option value="Remote / Virtual Assignment">Remote / Virtual Assignment</option>
+                  <option value="Remote / Virtual Assignment">Remote</option>
                 </select>
               </div>
               <div className="flex-1">
@@ -270,6 +301,7 @@ export default function AdminPanel() {
                   <option value="Administrative & Operations">Administrative & Operations</option>
                   <option value="Finance & Compliance">Finance & Compliance</option>
                   <option value="Internships & Fellowships">Internships & Fellowships</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>
@@ -280,18 +312,9 @@ export default function AdminPanel() {
             <h3 className="text-lg font-semibold mb-2">Experience & Education</h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium">Minimum Experience (Years)</label>
+                <label className="block text-sm font-medium">Experience (Years)</label>
                 <input
                   {...register("experience_min", { required: true, valueAsNumber: true })}
-                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
-                  type="number"
-                  min="0"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium">Maximum Experience (Years)</label>
-                <input
-                  {...register("experience_max", { required: true, valueAsNumber: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                   type="number"
                   min="0"
@@ -323,7 +346,7 @@ export default function AdminPanel() {
                   Salary Currency <span className="text-red-500">*</span>
                 </label>
                 <select
-                  {...register("salary_currency", { required: true })}
+                  {...register("salary_currency", { required: false })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   <option value="" disabled selected>Select Currency</option>
@@ -342,7 +365,7 @@ export default function AdminPanel() {
               <div className="flex-1">
                 <label className="block text-sm font-medium">Salary Value</label>
                 <input
-                  {...register("salary_value", { required: true, valueAsNumber: true })}
+                  {...register("salary_value", { required: false, valueAsNumber: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                   type="number"
                   step="0.01"
@@ -352,7 +375,7 @@ export default function AdminPanel() {
               <div className="flex-1">
                 <label className="block text-sm font-medium">Salary Unit</label>
                 <select
-                  {...register("salary_unit_text", { required: true })}
+                  {...register("salary_unit_text", { required: false })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   <option value="HOUR">Per Hour</option>
@@ -446,7 +469,7 @@ export default function AdminPanel() {
                       City <span className="text-red-500">*</span>
                     </label>
                     <input
-                      {...register("city", { required: true })}
+                      {...register("city", { required: false })}
                       className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="e.g., Mumbai"
                     />
@@ -456,7 +479,7 @@ export default function AdminPanel() {
                       PIN/Postal Code <span className="text-red-500">*</span>
                     </label>
                     <input
-                      {...register("pin_code", { required: true })}
+                      {...register("pin_code", { required: false })}
                       className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="e.g., 400001"
                     />
