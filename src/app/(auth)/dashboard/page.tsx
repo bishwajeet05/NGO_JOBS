@@ -8,6 +8,7 @@ type Job = {
   title: string;
   slug: string;
   description: string;
+  applyLink: string;
   responsibilities: string;
   qualifications: string;
   requirements: string;
