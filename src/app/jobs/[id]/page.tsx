@@ -231,12 +231,10 @@ export default async function JobDetail({
                 {/* Left side: Title, Category, and Post Date */}
                 <div className="flex flex-col gap-2">
                   <h1 className="text-3xl sm:text-3xl font-bold text-gray-800">{job.title}</h1>
-                  <div className="flex items-center gap-2">
-                    <UserGroupIcon className="h-4 w-4 text-gray-500" />
-                    <span>{job.city}, {job.country}</span>
-                  </div>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-gray-600 text-xs sm:text-sm">
                     <div className="flex items-center gap-1">
+                      <UserGroupIcon className="h-4 w-4 text-gray-500" />
+                      <span>{job.city}, {job.country}</span>
                       <BriefcaseIcon className="h-4 w-4 sm:h-4 sm:w-5 text-gray-600" />
                       <span> {job.employment_type}</span>
                       </div>
