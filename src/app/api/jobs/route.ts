@@ -24,10 +24,10 @@ export async function POST(request: Request) {
         career_prospects, role_category, role_type, employment_type, experience_min,
         experience_max, education_required, industry_type, department, key_skills,
         salary_currency, salary_value, salary_unit_text, date_posted, valid_through,
-        user_id, is_remote, is_active
+        country, state, city, pin_code, street_address,user_id, is_remote, is_active
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,
-        $16, $17, $18, $19, $20, $21, $22, $23, $24
+        $16, $17, $18, $19, $20, $21, $22, $23, $24 , $25, $26, $27, $28, $29
       ) RETURNING *
     `;
     const values = [
@@ -52,6 +52,11 @@ export async function POST(request: Request) {
       data.salary_unit_text,
       data.date_posted,
       data.valid_through,
+      data.country,
+      data.state,
+      data.city,
+      data.pin_code,
+      data.street_address,
       "ash",
       data.is_remote ?? false,
       data.is_active ?? true,
@@ -82,8 +87,8 @@ export async function PUT(request: Request) {
         experience_min = $12, experience_max = $13, education_required = $14,
         industry_type = $15, department = $16, key_skills = $17,
         salary_currency = $18, salary_value = $19, salary_unit_text = $20,
-        date_posted = $21, valid_through = $22, user_id = $23, is_remote = $24,
-        is_active = $25
+        date_posted = $21, valid_through = $22, country = $23, state = $24, city = $25, pin_code = $26, street_address = $27, user_id = $28, is_remote = $29,
+        is_active = $30
       WHERE id = $1 RETURNING *
     `;
     const values = [
@@ -109,6 +114,11 @@ export async function PUT(request: Request) {
       data.salary_unit_text,
       data.date_posted,
       data.valid_through,
+      data.country,
+      data.state,
+      data.city,
+      data.pin_code,
+      data.street_address,
       data.user_id,
       data.is_remote ?? false,
       data.is_active ?? true,

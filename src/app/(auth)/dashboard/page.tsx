@@ -28,6 +28,11 @@ type Job = {
   valid_through: string;
   organization_id: string;
   location_id: string;
+  country: string;
+  state: string;
+  city: string;
+  pin_code: string;
+  street_address: string;
   is_remote: boolean;
   is_active: boolean;
   created_at: string;
@@ -136,7 +141,7 @@ export default function AdminPanel() {
                       e.stopPropagation();
                       editJob(job);
                     }}
-                    className="bg-yellow-500 text-white px-3 py-1 rounded text-sm hover:bg-yellow-600 transition-colors"
+                    className="bg-yellow-500 text-black px-3 py-1 rounded text-sm hover:bg-yellow-600 transition-colors"
                   >
                     Edit
                   </button>
@@ -145,7 +150,7 @@ export default function AdminPanel() {
                       e.stopPropagation();
                       deleteJob(job.id);
                     }}
-                    className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors"
+                    className="bg-red-500 text-black px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors"
                   >
                     Delete
                   </button>
@@ -165,7 +170,7 @@ export default function AdminPanel() {
             <h3 className="text-lg font-semibold mb-2">Basic Information</h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium">Title</label>
+                <label className="block text-sm font-medium">Title<span className="text-red-500">*</span></label>
                 <textarea
                   {...register("title", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -178,7 +183,7 @@ export default function AdminPanel() {
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium">Slug</label>
+                <label className="block text-sm font-medium">Slug<span className="text-red-500">*</span></label>
                 <textarea
                   {...register("slug", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -197,59 +202,6 @@ export default function AdminPanel() {
                 <textarea
                   {...register("description", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                  rows={1}
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = "auto";
-                    target.style.height = `${target.scrollHeight}px`;
-                  }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Responsibilities</label>
-                <textarea
-                  {...register("responsibilities", { required: true })}
-                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                  rows={1}
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = "auto";
-                    target.style.height = `${target.scrollHeight}px`;
-                  }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Qualifications</label>
-                <textarea
-                  {...register("qualifications", { required: true })}
-                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                  rows={1}
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = "auto";
-                    target.style.height = `${target.scrollHeight}px`;
-                  }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Requirements</label>
-                <textarea
-                  {...register("requirements", { required: true })}
-                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                  rows={1}
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = "auto";
-                    target.style.height = `${target.scrollHeight}px`;
-                  }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Career Prospects</label>
-                <textarea
-                  {...register("career_prospects", { required: true })}
-                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                  rows={1}
                   onInput={(e) => {
                     const target = e.target as HTMLTextAreaElement;
                     target.style.height = "auto";
@@ -265,52 +217,60 @@ export default function AdminPanel() {
             <h3 className="text-lg font-semibold mb-2">Role Details</h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium">Role Category</label>
-                <input
+                <label className="block text-sm font-medium text-black">
+                  Employment Type <span className="text-red-500">*</span>
+                </label>
+                <select
                   {...register("role_category", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
+                >
+                  <option value="" disabled selected>Select Employment Type</option>
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Contractual">Contractual</option>
+                  <option value="Internship">Internship</option>
+                  <option value="Volunteer">Volunteer</option>
+                  <option value="Consultant / Freelance">Consultant / Freelance</option>
+                  <option value="Fellowship">Fellowship</option>
+                  <option value="Temporary / Project-based">Temporary / Project-based</option>
+                  <option value="Remote / Virtual Assignment">Remote / Virtual Assignment</option>
+                </select>
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium">Role Type</label>
-                <input
-                  {...register("role_type", { required: true })}
-                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium">Employment Type</label>
+                <label className="block text-sm font-medium text-black">
+                  Category <span className="text-red-500">*</span>
+                </label>
                 <select
                   {...register("employment_type", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
-                  <option value="FULL_TIME">Full Time</option>
-                  <option value="CONTRACTOR">Contractor</option>
-                  <option value="PART_TIME">Part Time</option>
-                  <option value="INTERN">Intern</option>
+                  <option value="" disabled selected>Select Category Type</option>
+                  <option value="Education">Education</option>
+                  <option value="Health">Health</option>
+                  <option value="Livelihoods">Livelihoods</option>
+                  <option value="Gender & Women Empowerment">Gender & Women Empowerment</option>
+                  <option value="Child Rights & Protection">Child Rights & Protection</option>
+                  <option value="Environment & Climate Change">Environment & Climate Change</option>
+                  <option value="Disability & Inclusion">Disability & Inclusion</option>
+                  <option value="Fundraising & Partnerships">Fundraising & Partnerships</option>
+                  <option value="Monitoring & Evaluation (M&E)">Monitoring & Evaluation (M&E)</option>
+                  <option value="Research & Policy">Research & Policy</option>
+                  <option value="Communications & Media">Communications & Media</option>
+                  <option value="Technology for Development (ICT4D)">Technology for Development (ICT4D)</option>
+                  <option value="Rural Development">Rural Development</option>
+                  <option value="Urban Development">Urban Development</option>
+                  <option value="WASH (Water, Sanitation & Hygiene)">WASH (Water, Sanitation & Hygiene)</option>
+                  <option value="Human Rights">Human Rights</option>
+                  <option value="Mental Health & Wellbeing">Mental Health & Wellbeing</option>
+                  <option value="Disaster Management">Disaster Management</option>
+                  <option value="Governance & Advocacy">Governance & Advocacy</option>
+                  <option value="Capacity Building & Training">Capacity Building & Training</option>
+                  <option value="Volunteer Management">Volunteer Management</option>
+                  <option value="CSR Implementation">CSR Implementation</option>
+                  <option value="Administrative & Operations">Administrative & Operations</option>
+                  <option value="Finance & Compliance">Finance & Compliance</option>
+                  <option value="Internships & Fellowships">Internships & Fellowships</option>
                 </select>
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium">Key Skills</label>
-                <input
-                  {...register("key_skills", { required: true })}
-                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder="Comma-separated skills"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium">Industry Type</label>
-                <input
-                  {...register("industry_type", { required: true })}
-                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium">Department</label>
-                <input
-                  {...register("department", { required: true })}
-                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
               </div>
             </div>
           </div>
@@ -340,11 +300,10 @@ export default function AdminPanel() {
             </div>
             <div className="grid grid-cols-1 gap-4 mt-4">
               <div>
-                <label className="block text-sm font-medium">Education Required</label>
+                <label className="block text-sm font-medium">Organisation/Company Name</label>
                 <textarea
                   {...register("education_required", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                  rows={4}
                   onInput={(e) => {
                     const target = e.target as HTMLTextAreaElement;
                     target.style.height = "auto";
@@ -360,12 +319,25 @@ export default function AdminPanel() {
             <h3 className="text-lg font-semibold mb-2">Salary</h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium">Salary Currency</label>
-                <input
+                <label className="block text-sm font-medium text-black">
+                  Salary Currency <span className="text-red-500">*</span>
+                </label>
+                <select
                   {...register("salary_currency", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder="e.g., INR"
-                />
+                >
+                  <option value="" disabled selected>Select Currency</option>
+                  <option value="INR">INR - Indian Rupee</option>
+                  <option value="USD">USD - US Dollar</option>
+                  <option value="EUR">EUR - Euro</option>
+                  <option value="GBP">GBP - British Pound</option>
+                  <option value="AUD">AUD - Australian Dollar</option>
+                  <option value="CAD">CAD - Canadian Dollar</option>
+                  <option value="JPY">JPY - Japanese Yen</option>
+                  <option value="CNY">CNY - Chinese Yuan</option>
+                  <option value="CHF">CHF - Swiss Franc</option>
+                  <option value="SGD">SGD - Singapore Dollar</option>
+                </select>
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium">Salary Value</label>
@@ -420,7 +392,16 @@ export default function AdminPanel() {
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <label className="block text-sm font-medium">Organization</label>
-                
+                <textarea
+                  {...register("slug", { required: true })}
+                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                  rows={1}
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement;
+                    target.style.height = "auto";
+                    target.style.height = `${target.scrollHeight}px`;
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -430,18 +411,69 @@ export default function AdminPanel() {
             <h3 className="text-lg font-semibold mb-2">Location</h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium">Location</label>
-              </div>
-              <div className="flex items-center gap-2">
-                <input
-                  {...register("is_remote")}
-                  type="checkbox"
-                  className="h-4 w-4"
-                  id="is_remote"
-                />
-                <label htmlFor="is_remote" className="text-sm font-medium">
-                  Remote
-                </label>
+                <div className="flex gap-4 mb-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-black">
+                      Country <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      {...register("country", { required: true })}
+                      className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                      <option value="" disabled selected>Select Country</option>
+                      <option value="India">India</option>
+                      <option value="United States">United States</option>
+                      <option value="United Kingdom">United Kingdom</option>
+                      <option value="Canada">Canada</option>
+                      <option value="Australia">Australia</option>
+                    </select>
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-black">
+                      State <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      {...register("state", { required: true })}
+                      className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                      placeholder="e.g., Maharashtra"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4 mb-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-black">
+                      City <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      {...register("city", { required: true })}
+                      className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                      placeholder="e.g., Mumbai"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-black">
+                      PIN/Postal Code <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      {...register("pin_code", { required: true })}
+                      className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                      placeholder="e.g., 400001"
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-black">
+                    Street Address
+                  </label>
+                  <textarea
+                    {...register("street_address")}
+                    className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                    rows={3}
+                    placeholder="e.g., 123 Main Street"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -467,7 +499,7 @@ export default function AdminPanel() {
           <div className="flex gap-2">
             <button
               type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+              className="bg-green-500 text-black px-4 py-2 rounded hover:bg-green-600 transition-colors"
             >
               {editingJob ? "Update Job" : "Add Job"}
             </button>
@@ -478,7 +510,7 @@ export default function AdminPanel() {
                   setEditingJob(null);
                   reset();
                 }}
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
+                className="bg-gray-500 text-black px-4 py-2 rounded hover:bg-gray-600 transition-colors"
               >
                 Cancel
               </button>
@@ -502,7 +534,7 @@ export default function AdminPanel() {
             </div>
             <button
               onClick={() => setViewingJob(null)}
-              className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors w-full sm:w-auto"
+              className="mt-4 bg-gray-500 text-black px-4 py-2 rounded hover:bg-gray-600 transition-colors w-full sm:w-auto"
             >
               Close
             </button>

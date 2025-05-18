@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 interface Jobs {
   id: string;
+  slug: string;
   title: string;
   organization: string;
   category: string;
@@ -25,8 +26,8 @@ export default async function AllJobs() {
       <h1 className="text-2xl font-bold text-black mb-6">All Jobs</h1>
       <ul className="space-y-4">
         {jobs.map((jobs) => (
-          <li key={jobs.id} className="border-b border-gray-200 pb-4 last:border-0">
-            <Link href={`/jobs/${jobs.id}`} className="block hover:bg-gray-50 p-4 rounded-lg transition-colors">
+          <li key={jobs.slug} className="border-b border-gray-200 pb-4 last:border-0">
+            <Link href={`/jobs/${jobs.slug}`} className="block hover:bg-gray-50 p-4 rounded-lg transition-colors">
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">{jobs.title}</h2>
                 <div className="mt-2 flex justify-between items-center text-sm text-gray-600">
