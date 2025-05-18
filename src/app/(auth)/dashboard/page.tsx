@@ -26,7 +26,8 @@ type Job = {
   salary_unit_text: string;
   date_posted: string;
   valid_through: string;
-  organization_id: string;
+  organization: string;
+  organization_type: string;
   location_id: string;
   country: string;
   state: string;
@@ -325,7 +326,7 @@ export default function AdminPanel() {
               <div>
                 <label className="block text-sm font-medium">Organisation/Company Name</label>
                 <textarea
-                  {...register("education_required", { required: true })}
+                  {...register("organization_type", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
                   onInput={(e) => {
                     const target = e.target as HTMLTextAreaElement;
@@ -416,7 +417,7 @@ export default function AdminPanel() {
               <div className="flex-1">
                 <label className="block text-sm font-medium">Organization</label>
                 <textarea
-                  {...register("slug", { required: true })}
+                  {...register("organization", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                   rows={1}
                   onInput={(e) => {

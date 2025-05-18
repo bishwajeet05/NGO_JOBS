@@ -17,49 +17,44 @@ import {
 import { Clock } from 'lucide-react';
 
 interface JobDetail {
-  id: string;
+id: string;
   title: string;
-  postDate: string;
-  category: string;
-  organization: string;
-  applyLink: string;
-  notificationLink: string;
-  officialWebsite: string;
-  studyMaterial: string;
-  summary: string;
-  startDate: string;
-  lastDate: string;
-  examDate: string | null;
-  feeLastDate: string;
-  admitCardDate: string | null;
-  feeGeneral: string;
-  feeOBC: string;
-  feeSC: string;
-  feeWomen: string;
-  feeMen: string;
-  free_fee: string;
-  ageMin: string;
-  ageMax: string;
-  ageRelaxation: string | null;
-  payScale: string;
-  salaryBreakup: string | null;
-  totalVacancies: string;
-  vacancyBreakup: string;
-  free_vacancy: string;
-  qualification: string;
-  eligiblity: string;
-  selectionProcess: string;
-  documents: string;
-  howToApply: string;
-  freeText_01: string;
-  freeText_02: string;
-  freeText_03: string;
-  freeText_04: string;
-  freeText_05: string;
+  slug: string;
+  description: string;
+  responsibilities: string;
+  qualifications: string;
+  requirements: string;
+  career_prospects: string;
+  role_category: string;
+  role_type: string;
+  employment_type: string;
+  experience_min: number;
+  experience_max: number;
+  education_required: string;
+  industry_type: string;
+  department: string;
+  key_skills: string;
+  salary_currency: string;
+  salary_value: number;
+  salary_unit_text: string;
+  date_posted: string;
+  valid_through: string;
+  organization_id: string;
+  location_id: string;
+  country: string;
+  state: string;
+  city: string;
+  pin_code: string;
+  street_address: string;
+  is_remote: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 interface Job {
   id: string;
+  slug:string;
   title: string;
   organization: string;
   category: string;
@@ -238,11 +233,11 @@ export default async function JobDetail({
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-gray-600 text-xs sm:text-sm">
                     <div className="flex items-center gap-1">
                       <BriefcaseIcon className="h-4 w-4 sm:h-4 sm:w-5 text-gray-600" />
-                      <span> {job.category}</span>
+                      <span> {job.employment_type}</span>
                       </div>
                       <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4 sm:h-4 sm:w-5 text-gray-600" />
-                      <span> {new Date(job.postDate).toLocaleDateString('en-IN')}</span>
+                      <span> {new Date(job.date_posted).toLocaleDateString('en-IN')}</span>
                     </div>
                   </div>
                 </div>
@@ -262,68 +257,97 @@ export default async function JobDetail({
             </div>
 
             <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6 flex flex-col gap-4">
-  <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Employment Information</h2>
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-600 text-sm">
-    {/* Left Column */}
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2">
-        <BuildingOfficeIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Industry:</strong> {}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <ClipboardDocumentListIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Department:</strong> {}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <CurrencyDollarIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Salary:</strong> ${}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <BriefcaseIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Employment Type:</strong> {}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <CalendarIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Date Posted:</strong> {}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <AcademicCapIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Requirements:</strong> {}</span>
-      </div>
-    </div>
-    {/* Right Column */}
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2">
-        <UserGroupIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Role Category:</strong> {}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <IdentificationIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Role Type:</strong> {}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <ClockIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Experience:</strong> {}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <CalendarIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Valid Through:</strong> {}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <GlobeAltIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Organization ID:</strong> {}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <MapPinIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Location:</strong> {}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <ClipboardDocumentListIcon className="h-5 w-5 text-gray-500" />
-        <span><strong>Career Prospects:</strong> {}</span>
-      </div>
-    </div>
-  </div>
-</div>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Employment Information</h2>
+              <div className="flex flex-col gap-3 text-gray-600 text-sm">
+                {/* Pair 1: Organization and Category */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex items-center gap-2">
+                    <BuildingOfficeIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Organization :</strong> {job.organization || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ClipboardDocumentListIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Category :</strong> {job.role_category || "N/A"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Pair 2: Salary and Date Posted */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex items-center gap-2">
+                    <CurrencyDollarIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Salary :</strong> {job.salary_value || "N/A"}{" "}
+                      {job.salary_currency}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ClockIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Job ID :</strong> {job.job_id || "N/A"}
+                    </span>
+                  </div>
+                  
+                </div>
+
+                {/* Pair 3: Experience and Organization Type */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex items-center gap-2">
+                    <CalendarIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Experience :</strong> {job.experience_min || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <GlobeAltIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Organization Type :</strong> {job.organization_type || "N/A"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Pair 4: Location and Employment Type */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex items-center gap-2">
+                    <UserGroupIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Location :</strong> {job.city || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <IdentificationIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Employment Type :</strong> {job.employment_type || "N/A"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Pair 5: Job ID and Valid Through */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex items-center gap-2">
+                    <BriefcaseIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Date Posted :</strong>{" "}
+                      {job.date_posted
+                        ? new Date(job.date_posted).toISOString().split("T")[0]
+                        : "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CalendarIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Valid Through :</strong>{" "}
+                      {job.valid_through
+                        ? new Date(job.valid_through).toISOString().split("T")[0]
+                        : "N/A"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Full Width Sections */}
             <div className="space-y-6 mt-6">
@@ -333,127 +357,10 @@ export default async function JobDetail({
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center w-full pl-4">
                     <div className="text-gray-600 whitespace-pre-line text-xs">
-                      <span className="text-gray-600 whitespace-pre-line text-xs">{job.summary}</span>
+                      <span className="text-gray-600 whitespace-pre-line text-xs">{job.description}</span>
                     </div>
                   </div>
                   <div className="flex items-center w-full pl-4 pb-5 md:pb-6"></div>
-                </div>
-
-                <h2 className="text-sm font-semibold text-gray-800 mb-4">Important Dates</h2>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center w-full pl-4">
-                    <span className="text-gray-600 whitespace-pre-line text-xs">Start Date : {new Date(job.startDate).toLocaleDateString('en-IN')}</span>
-                  </div>
-                  <div className="flex items-center w-full pl-4">
-                    <span className="text-gray-600 whitespace-pre-line text-xs">Last Date   : {new Date(job.lastDate).toLocaleDateString('en-IN')}</span>
-                  </div>
-                  <div className="flex items-center w-full pl-4">
-                    <span className="text-gray-600 whitespace-pre-line text-xs">Exam Date : {job.examDate ? new Date(job.examDate).toLocaleDateString('en-IN') : 'Not specified'}</span>
-                  </div>
-                  <div className="flex items-center w-full pl-4">
-                    <span className="text-gray-600 whitespace-pre-line text-xs">{job.feeLastDate}</span>
-                  </div>
-                  <div className="flex items-center w-full pl-4">
-                    <span className="text-gray-600 whitespace-pre-line text-xs">{job.admitCardDate ? new Date(job.admitCardDate).toLocaleDateString('en-IN') : 'Not specified'}</span>
-                  </div>
-                  <div className="flex items-center w-full pl-4 pb-5 md:pb-6"></div>
-                </div>
-
-                <h2 className="text-sm font-semibold text-gray-800 mb-4">Application Fee</h2>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <span className="ml-2 text-gray-600 whitespace-pre-line text-xs">{job.feeGeneral}</span>
-                  </div>
-                  <div>
-                    <span className="ml-2 text-gray-600 whitespace-pre-line text-xs">{job.feeOBC}</span>
-                  </div>
-                  <div>
-                    <span className="ml-2 text-gray-600 whitespace-pre-line text-xs">{job.feeSC}</span>
-                  </div>
-                  <div>
-                    <span className="ml-2 text-gray-600 whitespace-pre-line text-xs">{job.feeWomen}</span>
-                  </div>
-                  <div>
-                    <span className="ml-2 text-gray-600 whitespace-pre-line text-xs">{job.feeMen}</span>
-                  </div>
-                  <div>
-                    <span className="ml-2 text-gray-600 whitespace-pre-line text-xs">{job.free_fee}</span>
-                  </div>
-                  <div className="flex items-center w-full pl-4 pb-5 md:pb-6"></div>
-                </div>
-
-                <h2 className="text-sm font-semibold text-gray-800 mb-4">Age Limit</h2>
-                <div className="space-y-3 text-sm pl-4">
-                  <div>
-                    <span className="font-medium text-gray-600 whitespace-pre-line text-xs">Minimum Age:</span>
-                    <span className="ml-2 text-gray-600 whitespace-pre-line text-xs">{job.ageMin} years</span>
-                  </div>
-                  <div>
-                    <span className="font-medium text-gray-600 whitespace-pre-line text-xs">Maximum Age:</span>
-                    <span className="ml-2 text-gray-600 whitespace-pre-line text-xs">{job.ageMax} years</span>
-                  </div>
-                  {job.ageRelaxation && (
-                    <div>
-                      <span className="font-medium text-gray-600 whitespace-pre-line text-xs">Age Relaxation:</span>
-                      <div className="mt-2 text-gray-600 whitespace-pre-line text-xs">{job.ageRelaxation}</div>
-                    </div>
-                  )}
-                  <div className="flex items-center w-full pl-4 pb-5 md:pb-6"></div>
-                </div>
-
-                <h2 className="text-sm font-semibold text-gray-800 mb-4">Salary Details</h2>
-                <div className="space-y-3 text-sm pl-4">
-                  <div>
-                    <span className="text-gray-600 whitespace-pre-line text-xs">Pay Scale:</span>
-                    <span className="text-gray-600 whitespace-pre-line text-xs">{job.payScale}</span>
-                  </div>
-                  {job.salaryBreakup && (
-                    <div>
-                      <span className="text-gray-600 whitespace-pre-line text-xs">Salary Breakup:</span>
-                      <div className="mt-2 text-gray-600 whitespace-pre-line text-xs">{job.salaryBreakup}</div>
-                    </div>
-                  )}
-                  <div className="flex items-center w-full pl-4 pb-5 md:pb-6"></div>
-                </div>
-
-                <h2 className="text-s, font-semibold text-gray-800 mb-4">Vacancy Details</h2>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center w-full pl-4">
-                    <span className="text-gray-600 whitespace-pre-line text-xs">Total Vacancies:</span>
-                    <span className="text-gray-600 whitespace-pre-line text-xs">{job.totalVacancies}</span>
-                  </div>
-                  <div className="flex items-center w-full pl-4">
-                    <span className="text-gray-600 whitespace-pre-line text-xs">Category-wise Breakup:</span>
-                    <div className="mt-2 text-gray-600 whitespace-pre-line text-xs">{job.vacancyBreakup}</div>
-                  </div>
-                  <div className="flex items-center w-full pl-4">
-                    <div className="mt-2 text-gray-600 whitespace-pre-line text-xs">{job.free_vacancy}</div>
-                  </div>
-                  <h2 className="text-base font-semibold text-gray-800 mb-4">Qualification</h2>
-                  <div className="space-y-3 text-xs">
-                    <div className="flex items-center w-full pl-4">
-                      <span className="text-gray-600 whitespace-pre-line text-xs">{job.qualification}</span>
-                    </div>
-                    <div className="flex items-center w-full pl-4">
-                      <span className="text-gray-600 whitespace-pre-line text-xs">{job.eligiblity}</span>
-                    </div>
-                    <div className="flex items-center w-full pl-4"></div>
-                  </div>
-                  <h2 className="text-base font-semibold text-gray-800 mb-4">Selection Process</h2>
-                  <div className="space-y-3 text-xs">
-                    <div className="flex items-center w-full pl-4">
-                      <span className="text-gray-600 whitespace-pre-line text-xs">{job.selectionProcess}</span>
-                    </div>
-                    <div className="flex items-center w-full pl-4"></div>
-                  </div>
-
-                  <h2 className="text-sm font-semibold text-gray-800 mb-4">Required Documents</h2>
-                  <div className="space-y-3 text-xs">
-                    <div className="flex items-center w-full pl-4">
-                      <span className="text-gray-600 whitespace-pre-line text-xs">{job.documents}</span>
-                    </div>
-                    <div className="flex items-center w-full pl-4"></div>
-                  </div>
                 </div>
               </div>
 
