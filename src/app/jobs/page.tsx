@@ -5,21 +5,24 @@ import Link from 'next/link';
 
 interface Jobs {
   id: string;
-  slug: string;
+  slug:string;
   title: string;
   organization: string;
   category: string;
   postdate: string;
 }
-
+/*
 async function getJobs() {
   const posts = await getJobPosts();
   const jobs: Jobs[] = JSON.parse(JSON.stringify(posts));
   return jobs;
 }
-
+*/
+export const dynamic = 'force-dynamic'
 export default async function AllJobs() {
-  const jobs = await getJobs();
+  //const jobs = await getJobs();
+  const data = await fetch('http://13.232.100.77/api/jobs')
+  const jobs: Jobs[] = await data.json()
 
   return (
     <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -97,8 +100,8 @@ const mockJobs = Array.from({ length: 100 }, (_, i) => ({
 const mockBlogPosts = [
   {
     id: "1",
-    title: "Interview Question: Why Don’t You Have a Degree?",
-    description: "Learn how to respond if an interviewer asks you why you don’t have a degree, and read example answers that can help you craft.",
+    title: "Interview Question: Why Donâ€™t You Have a Degree?",
+    description: "Learn how to respond if an interviewer asks you why you donâ€™t have a degree, and read example answers that can help you craft.",
     author: "William Kend",
     date: "06 September",
     readTime: "9 mins to read",
@@ -108,7 +111,7 @@ const mockBlogPosts = [
   {
     id: "2",
     title: "21 Job Interview Tips: How To Make a Great Impression",
-    description: "Our mission is to create the world’s most sustainable healthcare company by creating high-quality healthcare products in iconic, sustainable packaging.",
+    description: "Our mission is to create the worldâ€™s most sustainable healthcare company by creating high-quality healthcare products in iconic, sustainable packaging.",
     author: "Sarah Harding",
     date: "06 September",
     readTime: "8 mins to read",
@@ -118,7 +121,7 @@ const mockBlogPosts = [
   {
     id: "3",
     title: "39 Strengths and Weaknesses To Discuss in a Job Interview",
-    description: "Our mission is to create the world’s most sustainable healthcare company by creating high-quality healthcare products in iconic, sustainable packaging.",
+    description: "Our mission is to create the worldâ€™s most sustainable healthcare company by creating high-quality healthcare products in iconic, sustainable packaging.",
     author: "Steven Jobs",
     date: "06 September",
     readTime: "6 mins to read",
