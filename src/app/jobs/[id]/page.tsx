@@ -15,11 +15,11 @@ import {
 import { Clock } from 'lucide-react';
 
 interface JobDetail {
-id: string;
+  id: string;
   title: string;
   slug: string;
   description: string;
-  applylink: string;
+  applyLink: string;
   responsibilities: string;
   qualifications: string;
   requirements: string;
@@ -38,7 +38,8 @@ id: string;
   salary_unit_text: string;
   date_posted: string;
   valid_through: string;
-  organization_id: string;
+  organization: string;
+  organization_type: string;
   location_id: string;
   country: string;
   state: string;
