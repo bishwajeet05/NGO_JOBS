@@ -361,9 +361,9 @@ export default async function JobDetail({
                 <h2 className="text-sm font-semibold text-gray-800 mb-4">Job Summary</h2>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center w-full pl-4">
-                    <div className="text-gray-600 whitespace-pre-line text-xs">
-                      <span className="text-gray-600 whitespace-pre-line text-xs">{job.description}</span>
-                    </div>
+                    <div className="text-gray-600 whitespace-pre-line text-xs"
+                    dangerouslySetInnerHTML={{ __html: job.description}}
+                  />
                   </div>
                   <div className="flex items-center w-full pl-4 pb-5 md:pb-6"></div>
                 </div>

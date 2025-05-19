@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 
 type Job = {
@@ -45,7 +45,83 @@ export default function AdminPanel() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [viewingJob, setViewingJob] = useState<Job | null>(null);
-  const { register, handleSubmit, reset, setValue } = useForm<Job>();
+  const { register, handleSubmit, reset, setValue, getValues } = useForm<Job>();
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  // Editor toolbar functions
+  const formatText = (command: string, value?: string) => {
+    if (command === 'fontSize' && value) {
+      // Apply font size using inline style for better control
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const selectedText = range.toString();
+        if (selectedText) {
+          const span = document.createElement('span');
+          span.style.fontSize = `${value}px`;
+          span.textContent = selectedText;
+          range.deleteContents();
+          range.insertNode(span);
+          // Move cursor after the span
+          range.setStartAfter(span);
+          range.setEndAfter(span);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+      }
+    } else {
+      document.execCommand(command, false, value);
+    }
+    updateFormValue();
+    editorRef.current?.focus();
+  };
+
+  const insertBulletList = () => {
+    document.execCommand('insertUnorderedList', false, undefined);
+    updateFormValue();
+    editorRef.current?.focus();
+  };
+
+  const insertNumberedList = () => {
+    document.execCommand('insertOrderedList', false, undefined);
+    updateFormValue();
+    editorRef.current?.focus();
+  };
+
+  const insertTable = () => {
+    const rows = prompt("Enter number of rows:", "2") || "2";
+    const cols = prompt("Enter number of columns:", "2") || "2";
+    const rowCount = parseInt(rows, 10);
+    const colCount = parseInt(cols, 10);
+    if (isNaN(rowCount) || isNaN(colCount) || rowCount <= 0 || colCount <= 0) return;
+
+    let tableHtml = '<table border="1" style="border-collapse: collapse; width: 100%;">';
+    for (let i = 0; i < rowCount; i++) {
+      tableHtml += '<tr>';
+      for (let j = 0; j < colCount; j++) {
+        tableHtml += '<td style="padding: 5px;"><br></td>';
+      }
+      tableHtml += '</tr>';
+    }
+    tableHtml += '</table><br>';
+    document.execCommand('insertHTML', false, tableHtml);
+    updateFormValue();
+    editorRef.current?.focus();
+  };
+
+  const updateFormValue = () => {
+    if (editorRef.current) {
+      setValue('description', editorRef.current.innerHTML);
+    }
+  };
+
+  // Initialize editor content when editing
+  useEffect(() => {
+    if (editingJob && editorRef.current) {
+      editorRef.current.innerHTML = editingJob.description || '';
+      setValue('description', editingJob.description || '');
+    }
+  }, [editingJob, setValue]);
 
   // Fetch data
   useEffect(() => {
@@ -94,7 +170,7 @@ export default function AdminPanel() {
             console.warn(`Error parsing valid_through: ${value}`, error);
             setValue("valid_through", "");
           }
-        } else {
+        } else if (key !== 'description') {
           setValue(key as keyof Job, value);
         }
       });
@@ -117,6 +193,7 @@ export default function AdminPanel() {
       }
       reset();
       setEditingJob(null);
+      if (editorRef.current) editorRef.current.innerHTML = '';
       const updatedJobs = await fetch("/api/jobs").then((res) => res.json());
       setJobs(updatedJobs);
     } catch (error: any) {
@@ -165,7 +242,7 @@ export default function AdminPanel() {
               >
                 <h3 className="font-semibold text-base">{job.title}</h3>
                 <p className="text-sm text-gray-600">
-                   {"Unknown Organization"}
+                  {job.organization || "Unknown Organization"}
                 </p>
                 <div className="flex gap-2 mt-2">
                   <button
@@ -244,15 +321,81 @@ export default function AdminPanel() {
               </div>
               <div>
                 <label className="block text-sm font-medium">Description</label>
-                <textarea
-                  {...register("description", { required: true })}
-                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = "auto";
-                    target.style.height = `${target.scrollHeight}px`;
-                  }}
-                />
+                <div className="mt-1">
+                  <div className="flex flex-wrap gap-2 mb-2 bg-gray-200 p-2 rounded">
+                    <button
+                      type="button"
+                      onClick={() => formatText('bold')}
+                      className="px-2 py-1 bg-white rounded hover:bg-gray-300"
+                      title="Bold"
+                    >
+                      <strong>B</strong>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => formatText('italic')}
+                      className="px-2 py-1 bg-white rounded hover:bg-gray-300"
+                      title="Italic"
+                    >
+                      <em>I</em>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={insertBulletList}
+                      className="px-2 py-1 bg-white rounded hover:bg-gray-300"
+                      title="Bullet List"
+                    >
+                      •
+                    </button>
+                    <button
+                      type="button"
+                      onClick={insertNumberedList}
+                      className="px-2 py-1 bg-white rounded hover:bg-gray-300"
+                      title="Numbered List"
+                    >
+                      1.
+                    </button>
+                    <select
+                      onChange={(e) => formatText('fontSize', e.target.value)}
+                      className="px-2 py-1 bg-white rounded"
+                      title="Font Size"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>Size</option>
+                      {[12, 14, 16, 18, 20, 24, 28, 32, 36, 40].map((size) => (
+                        <option key={size} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      onChange={(e) => formatText('foreColor', e.target.value)}
+                      className="px-2 py-1 bg-white rounded"
+                      title="Text Color"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>Color</option>
+                      <option value="black">Black</option>
+                      <option value="red">Red</option>
+                      <option value="blue">Blue</option>
+                    </select>
+                    <button
+                      type="button"
+                      onClick={insertTable}
+                      className="px-2 py-1 bg-white rounded hover:bg-gray-300"
+                      title="Insert Table"
+                    >
+                      Table
+                    </button>
+                  </div>
+                  <div
+                    ref={editorRef}
+                    contentEditable
+                    onInput={updateFormValue}
+                    className="min-h-[200px] p-2 border rounded bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                    style={{ whiteSpace: 'pre-wrap' }}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -269,7 +412,7 @@ export default function AdminPanel() {
                   {...register("role_category", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
-                  <option value="" disabled selected>Select Employment Type</option>
+                  <option value="" disabled>Select Employment Type</option>
                   <option value="Full-time">Full-time</option>
                   <option value="Part-time">Part-time</option>
                   <option value="Contractual">Contractual</option>
@@ -290,7 +433,7 @@ export default function AdminPanel() {
                   {...register("employment_type", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
-                  <option value="" disabled selected>Select Category Type</option>
+                  <option value="" disabled>Select Category Type</option>
                   <option value="Education">Education</option>
                   <option value="Health">Health</option>
                   <option value="Livelihoods">Livelihoods</option>
@@ -350,7 +493,7 @@ export default function AdminPanel() {
                   {...register("salary_currency", { required: false })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
-                  <option value="" disabled selected>Select Currency</option>
+                  <option value="" disabled>Select Currency</option>
                   <option value="INR">INR - Indian Rupee</option>
                   <option value="USD">USD - US Dollar</option>
                   <option value="EUR">EUR - Euro</option>
@@ -457,7 +600,7 @@ export default function AdminPanel() {
                       {...register("country", { required: true })}
                       className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
-                      <option value="" disabled selected>Select Country</option>
+                      <option value="" disabled>Select Country</option>
                       <option value="India">India</option>
                       <option value="United States">United States</option>
                       <option value="United Kingdom">United Kingdom</option>
@@ -480,12 +623,12 @@ export default function AdminPanel() {
                 <div className="flex gap-4 mb-4">
                   <div className="flex-1">
                     <label className="block text-sm font-medium text-black">
-                      City <span className="text-red-500">*</span>
+                      State <span className="text-red-500">*</span>
                     </label>
                     <input
-                      {...register("city", { required: false })}
+                      {...register("state", { required: true })}
                       className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
-                      placeholder="e.g., Mumbai"
+                      placeholder="e.g., Maharashtra"
                     />
                   </div>
                   <div className="flex-1">
@@ -517,7 +660,7 @@ export default function AdminPanel() {
 
           {/* Status */}
           <div>
-            <h3 className="text-lg font-semibold mb-2">Status</h3>
+            <h3 className="text-lg font-semibold mb-2"></h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex items-center gap-2">
                 <input
@@ -546,6 +689,7 @@ export default function AdminPanel() {
                 onClick={() => {
                   setEditingJob(null);
                   reset();
+                  if (editorRef.current) editorRef.current.innerHTML = '';
                 }}
                 className="bg-gray-500 text-black px-4 py-2 rounded hover:bg-gray-600 transition-colors"
               >
@@ -565,7 +709,13 @@ export default function AdminPanel() {
               {Object.entries(viewingJob).map(([key, value]) => (
                 <p key={key} className="capitalize">
                   <strong>{key.replace(/_/g, " ")}:</strong>{" "}
-                  {typeof value === "boolean" ? value.toString() : value || "N/A"}
+                  {key === "description" ? (
+                    <span dangerouslySetInnerHTML={{ __html: String(value) }} />
+                  ) : typeof value === "boolean" ? (
+                    value.toString()
+                  ) : (
+                    value || "N/A"
+                  )}
                 </p>
               ))}
             </div>
