@@ -320,8 +320,16 @@ export default async function JobDetail({
                   <div className="flex items-center gap-2">
                     <MapPinIcon className="h-5 w-5 text-gray-500" />
                     <span>
-                      <strong>Location :</strong> {job.city || "N/A"}
+                      <strong>Location :</strong> {[
+                        job.street_address,
+                        job.city,
+                        job.state,
+                        job.country,
+                      ]
+                        .filter(Boolean) // Remove falsy values (null, undefined, '')
+                        .join(', ')}
                     </span>
+
                   </div>
                   <div className="flex items-center gap-2">
                     <IdentificationIcon className="h-5 w-5 text-gray-500" />
