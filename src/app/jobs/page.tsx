@@ -161,7 +161,9 @@ export default async function AllJobs() {
                     <div className="truncate">Location: {job.city ? `${job.city}, ${job.country}` : job.country}</div>
                   </div>
                   <div className="text-xs text-gray-500 mt-2 truncate">
-                    Deadline: {job.valid_through}
+                    Deadline: {job.valid_through
+                        ? new Date(job.valid_through).toISOString().split("T")[0]
+                        : "N/A"}
                   </div>
                 </div>
               </Link>
@@ -203,7 +205,9 @@ export default async function AllJobs() {
                     <div className="truncate">Location: {job.city ? `${job.city}, ${job.country}` : job.country}</div>
                   </div>
                   <div className="text-xs text-gray-500 mt-2 truncate">
-                    Deadline: {job.valid_through}
+                    Deadline: {job.valid_through
+                        ? new Date(job.valid_through).toISOString().split("T")[0]
+                        : "N/A"}
                   </div>
                 </div>
               </Link>
