@@ -59,7 +59,7 @@ export default async function AllJobs() {
   }));
 
   const featuredJobs = enrichedJobs.slice(0, 3); // First 3 jobs as featured
-  const latestJobs = enrichedJobs.slice(3, 6); // Next 3 jobs as latest
+  const latestJobs = enrichedJobs.slice(3, 100); // Next 3 jobs as latest
 
   return (
     <>
@@ -193,7 +193,7 @@ export default async function AllJobs() {
                     />
                     <div className="flex-1 overflow-hidden">
                       <h3 className="text-base font-semibold text-gray-900 truncate">{job.title}</h3>
-                      <p className="text-xs text-gray-500 truncate">by {job.organization}</p>
+                      <p className="text-xs text-gray-500 truncate">{job.organization}</p>
                     </div>
                   </div>
                   <div className="flex-1 text-xs text-gray-600 space-y-1 overflow-hidden">
