@@ -158,7 +158,7 @@ export default async function AllJobs() {
                     </div>
                     <div className="truncate">Category: {job.role_category}</div>
                     <div className="truncate">Salary: {job.salary}</div>
-                    <div className="truncate">Location: {job.location.city}, {job.location.country}</div>
+                    <div className="truncate">Location: {job.city ? `${job.city}, ${job.country}` : job.country}</div>
                   </div>
                   <div className="text-xs text-gray-500 mt-2 truncate">
                     Deadline: {job.valid_through}
@@ -200,7 +200,7 @@ export default async function AllJobs() {
                     </div>
                     <div className="truncate">Category: {job.role_category}</div>
                     <div className="truncate">Salary: {job.salary}</div>
-                    <div className="truncate">Location: {job.location.city}, {job.location.country}</div>
+                    <div className="truncate">Location: {job.city ? `${job.city}, ${job.country}` : job.country}</div>
                   </div>
                   <div className="text-xs text-gray-500 mt-2 truncate">
                     Deadline: {job.valid_through}
