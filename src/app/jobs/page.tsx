@@ -71,7 +71,7 @@ export default async function AllJobs() {
         />
       </Head>
 
-      <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-50 min-h-screen">
+      <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
         {/* Search Bar and Filters */}
         <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8 bg-white p-6 rounded-xl shadow-md">
           <div className="relative w-full sm:w-1/2">
