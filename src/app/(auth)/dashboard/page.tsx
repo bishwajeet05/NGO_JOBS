@@ -307,7 +307,7 @@ export default function AdminPanel() {
             </div>
             <div className="grid grid-cols-1 gap-4 mt-4">
               <div>
-                <label className="block text-sm font-medium">URL</label>
+                <label className="block text-sm font-medium">URL <span className="text-red-500">*</span></label>
                 <textarea
                   {...register("applyLink", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
@@ -455,7 +455,7 @@ export default function AdminPanel() {
                   <option value="Governance & Advocacy">Governance & Advocacy</option>
                   <option value="Capacity Building & Training">Capacity Building & Training</option>
                   <option value="Volunteer Management">Volunteer Management</option>
-                  <option value="CSR Implementation">CSR Implementation</option>
+                  <option value="CSR Implementation">Corporate Social Responsibility (CSR)</option>
                   <option value="Administrative & Operations">Administrative & Operations</option>
                   <option value="Finance & Compliance">Finance & Compliance</option>
                   <option value="Internships & Fellowships">Internships & Fellowships</option>
@@ -472,7 +472,7 @@ export default function AdminPanel() {
               <div className="flex-1">
                 <label className="block text-sm font-medium">Experience (Years)</label>
                 <input
-                  {...register("experience_min", { required: true, valueAsNumber: true })}
+                  {...register("experience_min", { required: false, valueAsNumber: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                   type="number"
                   min="0"
@@ -487,7 +487,7 @@ export default function AdminPanel() {
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-black">
-                  Salary Currency <span className="text-red-500">*</span>
+                  Salary Currency <span className="text-red-500"></span>
                 </label>
                 <select
                   {...register("salary_currency", { required: false })}
@@ -535,7 +535,7 @@ export default function AdminPanel() {
             <h3 className="text-lg font-semibold mb-2">Dates</h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium">Date Posted</label>
+                <label className="block text-sm font-medium">Date Posted<span className="text-red-500">*</span></label>
                 <input
                   {...register("date_posted", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -543,7 +543,7 @@ export default function AdminPanel() {
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium">Valid Through</label>
+                <label className="block text-sm font-medium">Valid Through<span className="text-red-500">*</span></label>
                 <input
                   {...register("valid_through", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -558,7 +558,7 @@ export default function AdminPanel() {
             <h3 className="text-lg font-semibold mb-2">Organization</h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium">Organization</label>
+                <label className="block text-sm font-medium">Organization / Company name <span className="text-red-500">*</span></label>
                 <textarea
                   {...register("organization", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -571,7 +571,7 @@ export default function AdminPanel() {
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium">Organisation/Company Name</label>
+                <label className="block text-sm font-medium">Organisation Details</label>
                 <textarea
                   {...register("organization_type", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -610,10 +610,10 @@ export default function AdminPanel() {
                   </div>
                   <div className="flex-1">
                     <label className="block text-sm font-medium text-black">
-                      State <span className="text-red-500">*</span>
+                      State <span className="text-red-500"></span>
                     </label>
                     <input
-                      {...register("state", { required: true })}
+                      {...register("state", { required: false })}
                       className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="e.g., Maharashtra"
                     />
@@ -623,17 +623,17 @@ export default function AdminPanel() {
                 <div className="flex gap-4 mb-4">
                   <div className="flex-1">
                     <label className="block text-sm font-medium text-black">
-                      State <span className="text-red-500">*</span>
+                      City <span className="text-red-500"></span>
                     </label>
                     <input
-                      {...register("state", { required: true })}
+                      {...register("state", { required: false })}
                       className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="e.g., Maharashtra"
                     />
                   </div>
                   <div className="flex-1">
                     <label className="block text-sm font-medium text-black">
-                      PIN/Postal Code <span className="text-red-500">*</span>
+                      PIN/Postal Code <span className="text-red-500"></span>
                     </label>
                     <input
                       {...register("pin_code", { required: false })}
