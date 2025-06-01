@@ -62,7 +62,7 @@ export async function POST(request: Request) {
       data.is_active ?? true,
       data.organization,
       data.organization_type,
-      data.applyLink,
+      data.applylink,
     ];
     if (token) {
         const decoded = await verifyToken(token);

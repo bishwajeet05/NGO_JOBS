@@ -8,7 +8,7 @@ type Job = {
   title: string;
   slug: string;
   description: string;
-  applyLink: string;
+  applylink: string;
   responsibilities: string;
   qualifications: string;
   requirements: string;
@@ -306,10 +306,10 @@ export default function AdminPanel() {
               </div>
             </div>
             <div className="grid grid-cols-1 gap-4 mt-4">
-              <div>
+              <div className="flex-1">
                 <label className="block text-sm font-medium">URL <span className="text-red-500">*</span></label>
                 <textarea
-                  {...register("applyLink", { required: true })}
+                  {...register("applylink", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
                   rows={1}
                   onInput={(e) => {
@@ -455,7 +455,7 @@ export default function AdminPanel() {
                   <option value="Governance & Advocacy">Governance & Advocacy</option>
                   <option value="Capacity Building & Training">Capacity Building & Training</option>
                   <option value="Volunteer Management">Volunteer Management</option>
-                  <option value="CSR Implementation">Corporate Social Responsibility (CSR)</option>
+                  <option value="Corporate Social Responsibility (CSR)">Corporate Social Responsibility (CSR)</option>
                   <option value="Administrative & Operations">Administrative & Operations</option>
                   <option value="Finance & Compliance">Finance & Compliance</option>
                   <option value="Internships & Fellowships">Internships & Fellowships</option>
