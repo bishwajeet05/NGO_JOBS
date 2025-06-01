@@ -254,7 +254,7 @@ export default async function JobDetail({
                 <div className="flex items-start justify-end">
                   {job && job.applylink ? (
                     <a
-                      href={job.applylink}
+                      href={`https://${job.applylink}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 sm:py-3 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center"
