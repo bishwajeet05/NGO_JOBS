@@ -8,6 +8,7 @@ type Job = {
   title: string;
   slug: string;
   description: string;
+  how_to_apply: string;
   applylink: string;
   responsibilities: string;
   qualifications: string;
@@ -46,10 +47,12 @@ export default function AdminPanel() {
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [viewingJob, setViewingJob] = useState<Job | null>(null);
   const { register, handleSubmit, reset, setValue, getValues } = useForm<Job>();
-  const editorRef = useRef<HTMLDivElement>(null);
+  const descriptionEditorRef = useRef<HTMLDivElement>(null);
+  const howToApplyEditorRef = useRef<HTMLDivElement>(null);
 
   // Editor toolbar functions
-  const formatText = (command: string, value?: string) => {
+  const formatText = (command: string, value?: string, editor: 'description' | 'how_to_apply' = 'description') => {
+    const editorRef = editor === 'description' ? descriptionEditorRef : howToApplyEditorRef;
     if (command === 'fontSize' && value) {
       // Apply font size using inline style for better control
       const selection = window.getSelection();
@@ -72,23 +75,25 @@ export default function AdminPanel() {
     } else {
       document.execCommand(command, false, value);
     }
-    updateFormValue();
+    updateFormValue(editor);
     editorRef.current?.focus();
   };
 
-  const insertBulletList = () => {
+  const insertBulletList = (editor: 'description' | 'how_to_apply' = 'description') => {
     document.execCommand('insertUnorderedList', false, undefined);
-    updateFormValue();
+    updateFormValue(editor);
+    const editorRef = editor === 'description' ? descriptionEditorRef : howToApplyEditorRef;
     editorRef.current?.focus();
   };
 
-  const insertNumberedList = () => {
+  const insertNumberedList = (editor: 'description' | 'how_to_apply' = 'description') => {
     document.execCommand('insertOrderedList', false, undefined);
-    updateFormValue();
+    updateFormValue(editor);
+    const editorRef = editor === 'description' ? descriptionEditorRef : howToApplyEditorRef;
     editorRef.current?.focus();
   };
 
-  const insertTable = () => {
+  const insertTable = (editor: 'description' | 'how_to_apply' = 'description') => {
     const rows = prompt("Enter number of rows:", "2") || "2";
     const cols = prompt("Enter number of columns:", "2") || "2";
     const rowCount = parseInt(rows, 10);
@@ -105,21 +110,29 @@ export default function AdminPanel() {
     }
     tableHtml += '</table><br>';
     document.execCommand('insertHTML', false, tableHtml);
-    updateFormValue();
+    updateFormValue(editor);
+    const editorRef = editor === 'description' ? descriptionEditorRef : howToApplyEditorRef;
     editorRef.current?.focus();
   };
 
-  const updateFormValue = () => {
+  const updateFormValue = (editor: 'description' | 'how_to_apply') => {
+    const editorRef = editor === 'description' ? descriptionEditorRef : howToApplyEditorRef;
     if (editorRef.current) {
-      setValue('description', editorRef.current.innerHTML);
+      setValue(editor, editorRef.current.innerHTML);
     }
   };
 
   // Initialize editor content when editing
   useEffect(() => {
-    if (editingJob && editorRef.current) {
-      editorRef.current.innerHTML = editingJob.description || '';
-      setValue('description', editingJob.description || '');
+    if (editingJob) {
+      if (descriptionEditorRef.current) {
+        descriptionEditorRef.current.innerHTML = editingJob.description || '';
+        setValue('description', editingJob.description || '');
+      }
+      if (howToApplyEditorRef.current) {
+        howToApplyEditorRef.current.innerHTML = editingJob.how_to_apply || '';
+        setValue('how_to_apply', editingJob.how_to_apply || '');
+      }
     }
   }, [editingJob, setValue]);
 
@@ -170,7 +183,7 @@ export default function AdminPanel() {
             console.warn(`Error parsing valid_through: ${value}`, error);
             setValue("valid_through", "");
           }
-        } else if (key !== 'description') {
+        } else if (key !== 'description' && key !== 'how_to_apply') {
           setValue(key as keyof Job, value);
         }
       });
@@ -193,7 +206,8 @@ export default function AdminPanel() {
       }
       reset();
       setEditingJob(null);
-      if (editorRef.current) editorRef.current.innerHTML = '';
+      if (descriptionEditorRef.current) descriptionEditorRef.current.innerHTML = '';
+      if (howToApplyEditorRef.current) howToApplyEditorRef.current.innerHTML = '';
       const updatedJobs = await fetch("/api/jobs").then((res) => res.json());
       setJobs(updatedJobs);
     } catch (error: any) {
@@ -325,7 +339,7 @@ export default function AdminPanel() {
                   <div className="flex flex-wrap gap-2 mb-2 bg-gray-200 p-2 rounded">
                     <button
                       type="button"
-                      onClick={() => formatText('bold')}
+                      onClick={() => formatText('bold', undefined, 'description')}
                       className="px-2 py-1 bg-white rounded hover:bg-gray-300"
                       title="Bold"
                     >
@@ -333,7 +347,7 @@ export default function AdminPanel() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => formatText('italic')}
+                      onClick={() => formatText('italic', undefined, 'description')}
                       className="px-2 py-1 bg-white rounded hover:bg-gray-300"
                       title="Italic"
                     >
@@ -341,7 +355,7 @@ export default function AdminPanel() {
                     </button>
                     <button
                       type="button"
-                      onClick={insertBulletList}
+                      onClick={() => insertBulletList('description')}
                       className="px-2 py-1 bg-white rounded hover:bg-gray-300"
                       title="Bullet List"
                     >
@@ -349,14 +363,14 @@ export default function AdminPanel() {
                     </button>
                     <button
                       type="button"
-                      onClick={insertNumberedList}
+                      onClick={() => insertNumberedList('description')}
                       className="px-2 py-1 bg-white rounded hover:bg-gray-300"
                       title="Numbered List"
                     >
                       1.
                     </button>
                     <select
-                      onChange={(e) => formatText('fontSize', e.target.value)}
+                      onChange={(e) => formatText('fontSize', e.target.value, 'description')}
                       className="px-2 py-1 bg-white rounded"
                       title="Font Size"
                       defaultValue=""
@@ -369,7 +383,7 @@ export default function AdminPanel() {
                       ))}
                     </select>
                     <select
-                      onChange={(e) => formatText('foreColor', e.target.value)}
+                      onChange={(e) => formatText('foreColor', e.target.value, 'description')}
                       className="px-2 py-1 bg-white rounded"
                       title="Text Color"
                       defaultValue=""
@@ -381,7 +395,7 @@ export default function AdminPanel() {
                     </select>
                     <button
                       type="button"
-                      onClick={insertTable}
+                      onClick={() => insertTable('description')}
                       className="px-2 py-1 bg-white rounded hover:bg-gray-300"
                       title="Insert Table"
                     >
@@ -389,9 +403,87 @@ export default function AdminPanel() {
                     </button>
                   </div>
                   <div
-                    ref={editorRef}
+                    ref={descriptionEditorRef}
                     contentEditable
-                    onInput={updateFormValue}
+                    onInput={() => updateFormValue('description')}
+                    className="min-h-[200px] p-2 border rounded bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                    style={{ whiteSpace: 'pre-wrap' }}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium">How to Apply</label>
+                <div className="mt-1">
+                  <div className="flex flex-wrap gap-2 mb-2 bg-gray-200 p-2 rounded">
+                    <button
+                      type="button"
+                      onClick={() => formatText('bold', undefined, 'how_to_apply')}
+                      className="px-2 py-1 bg-white rounded hover:bg-gray-300"
+                      title="Bold"
+                    >
+                      <strong>B</strong>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => formatText('italic', undefined, 'how_to_apply')}
+                      className="px-2 py-1 bg-white rounded hover:bg-gray-300"
+                      title="Italic"
+                    >
+                      <em>I</em>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertBulletList('how_to_apply')}
+                      className="px-2 py-1 bg-white rounded hover:bg-gray-300"
+                      title="Bullet List"
+                    >
+                      •
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertNumberedList('how_to_apply')}
+                      className="px-2 py-1 bg-white rounded hover:bg-gray-300"
+                      title="Numbered List"
+                    >
+                      1.
+                    </button>
+                    <select
+                      onChange={(e) => formatText('fontSize', e.target.value, 'how_to_apply')}
+                      className="px-2 py-1 bg-white rounded"
+                      title="Font Size"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>Size</option>
+                      {[12, 14, 16, 18, 20, 24, 28, 32, 36, 40].map((size) => (
+                        <option key={size} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      onChange={(e) => formatText('foreColor', e.target.value, 'how_to_apply')}
+                      className="px-2 py-1 bg-white rounded"
+                      title="Text Color"
+                      defaultValue=""
+                    >
+                      <option value="" disabled>Color</option>
+                      <option value="black">Black</option>
+                      <option value="red">Red</option>
+                      <option value="blue">Blue</option>
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => insertTable('how_to_apply')}
+                      className="px-2 py-1 bg-white rounded hover:bg-gray-300"
+                      title="Insert Table"
+                    >
+                      Table
+                    </button>
+                  </div>
+                  <div
+                    ref={howToApplyEditorRef}
+                    contentEditable
+                    onInput={() => updateFormValue('how_to_apply')}
                     className="min-h-[200px] p-2 border rounded bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
                     style={{ whiteSpace: 'pre-wrap' }}
                   />
@@ -455,7 +547,7 @@ export default function AdminPanel() {
                   <option value="Governance & Advocacy">Governance & Advocacy</option>
                   <option value="Capacity Building & Training">Capacity Building & Training</option>
                   <option value="Volunteer Management">Volunteer Management</option>
-                  <option value="Corporate Social Responsibility (CSR)">Corporate Social Responsibility (CSR)</option>
+                  <option value="Corporate Social Responsibility (CSR)">Corporate Social Responsibility (CSR)</option>
                   <option value="Administrative & Operations">Administrative & Operations</option>
                   <option value="Finance & Compliance">Finance & Compliance</option>
                   <option value="Internships & Fellowships">Internships & Fellowships</option>
@@ -689,7 +781,8 @@ export default function AdminPanel() {
                 onClick={() => {
                   setEditingJob(null);
                   reset();
-                  if (editorRef.current) editorRef.current.innerHTML = '';
+                  if (descriptionEditorRef.current) descriptionEditorRef.current.innerHTML = '';
+                  if (howToApplyEditorRef.current) howToApplyEditorRef.current.innerHTML = '';
                 }}
                 className="bg-gray-500 text-black px-4 py-2 rounded hover:bg-gray-600 transition-colors"
               >
@@ -709,7 +802,7 @@ export default function AdminPanel() {
               {Object.entries(viewingJob).map(([key, value]) => (
                 <p key={key} className="capitalize">
                   <strong>{key.replace(/_/g, " ")}:</strong>{" "}
-                  {key === "description" ? (
+                  {key === "description" || key === "how_to_apply" ? (
                     <span dangerouslySetInnerHTML={{ __html: String(value) }} />
                   ) : typeof value === "boolean" ? (
                     value.toString()

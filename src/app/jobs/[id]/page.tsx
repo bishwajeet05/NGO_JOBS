@@ -382,7 +382,14 @@ export default async function JobDetail({
               {/* How to Apply */}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-sm font-semibold text-gray-800 mb-4">How to Apply</h2>
-                <div className="text-gray-600 whitespace-pre-line text-xs">{job.howToApply}</div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center w-full pl-4">
+                    <div className="text-gray-600 whitespace-pre-line text-xs"
+                    dangerouslySetInnerHTML={{ __html: job.how_to_apply}}
+                  />
+                  </div>
+                  <div className="flex items-center w-full pl-4 pb-5 md:pb-6"></div>
+                </div>
                 <div className="flex items-center w-full pl-4 pb-5 md:pb-6"></div>
               </div>
             </div>
