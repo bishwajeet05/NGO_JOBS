@@ -127,7 +127,7 @@ export async function PUT(request: Request) {
       data.is_active ?? true,
       data.organization,
       data.organization_type,
-      data.applyLink,
+      data.applylink,
     ];
     const result = await pool.query(query, values);
     if (result.rowCount === 0) {
