@@ -46,9 +46,33 @@ export default function AdminPanel() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [viewingJob, setViewingJob] = useState<Job | null>(null);
-  const { register, handleSubmit, reset, setValue, getValues } = useForm<Job>();
+  const { register, handleSubmit, reset, setValue, getValues, watch } = useForm<Job>();
   const descriptionEditorRef = useRef<HTMLDivElement>(null);
   const howToApplyEditorRef = useRef<HTMLDivElement>(null);
+
+  // Watch for changes in title, city, and state to generate slug
+  const title = watch("title");
+  const city = watch("city");
+  const state = watch("state");
+
+  // Utility function to generate a slug
+  const generateSlug = (title: string, city: string, state: string) => {
+    const parts = [title, city, state].filter(part => part).map(part => 
+      part.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+        .trim()
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+    ).filter(part => part); // Remove empty parts
+    return parts.join('-') || 'job'; // Fallback to 'job' if all parts are empty
+  };
+
+  // Update slug when title, city, or state changes
+  useEffect(() => {
+    if (!editingJob || (editingJob && getValues("slug") === editingJob.slug)) {
+      const newSlug = generateSlug(title || '', city || '', state || '');
+      setValue("slug", newSlug);
+    }
+  }, [title, city, state, setValue, editingJob, getValues]);
 
   // Editor toolbar functions
   const formatText = (command: string, value?: string, editor: 'description' | 'how_to_apply' = 'description') => {
