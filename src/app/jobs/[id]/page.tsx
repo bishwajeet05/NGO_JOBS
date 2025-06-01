@@ -233,9 +233,16 @@ export default async function JobDetail({
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-gray-600 text-xs sm:text-sm">
                     <div className="flex items-center gap-1">
                       <MapPinIcon className="h-4 w-4 text-gray-500" />
-                      <span>{job.city}, {job.country}</span>
+                      <span>
+                      {[
+                        job.city,
+                        job.country,
+                      ]
+                        .filter(Boolean) // Remove falsy values (null, undefined, '')
+                        .join(', ')}
+                    </span>
                       <BriefcaseIcon className="h-4 w-4 sm:h-4 sm:w-5 text-gray-600" />
-                      <span> {job.employment_type}</span>
+                      <span> {job.organization}</span>
                       </div>
                       <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4 sm:h-4 sm:w-5 text-gray-600" />
@@ -341,24 +348,32 @@ export default async function JobDetail({
 
                 {/* Pair 5: Job ID and Valid Through */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="flex items-center gap-2">
-                    <BriefcaseIcon className="h-5 w-5 text-gray-500" />
-                    <span>
-                      <strong>Date Posted :</strong>{" "}
-                      {job.date_posted
-                        ? new Date(job.date_posted).toISOString().split("T")[0]
-                        : "N/A"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CalendarIcon className="h-5 w-5 text-gray-500" />
-                    <span>
-                      <strong>Valid Through :</strong>{" "}
-                      {job.valid_through
-                        ? new Date(job.valid_through).toISOString().split("T")[0]
-                        : "N/A"}
-                    </span>
-                  </div>
+                 <div className="flex items-center gap-2">
+                  <BriefcaseIcon className="h-5 w-5 text-gray-500" />
+                  <span>
+                    <strong>Date Posted :</strong>{" "}
+                    {job.date_posted
+                      ? new Date(job.date_posted).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })
+                      : "N/A"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5 text-gray-500" />
+                  <span>
+                    <strong>Valid Through :</strong>{" "}
+                    {job.valid_through
+                      ? new Date(job.valid_through).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })
+                      : "N/A"}
+                  </span>
+                </div>
                 </div>
               </div>
             </div>

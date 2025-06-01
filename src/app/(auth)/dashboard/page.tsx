@@ -626,9 +626,9 @@ export default function AdminPanel() {
                       City <span className="text-red-500"></span>
                     </label>
                     <input
-                      {...register("state", { required: false })}
+                      {...register("city", { required: false })}
                       className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
-                      placeholder="e.g., Maharashtra"
+                      placeholder="e.g., Pune"
                     />
                   </div>
                   <div className="flex-1">
