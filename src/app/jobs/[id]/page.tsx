@@ -275,9 +275,9 @@ export default async function JobDetail({
                 {/* Pair 1: Organization and Category */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="flex items-center gap-2">
-                    <BuildingOfficeIcon className="h-5 w-5 text-gray-500" />
+                    <ClockIcon className="h-5 w-5 text-gray-500" />
                     <span>
-                      <strong>Organization :</strong> {job.organization || "N/A"}
+                      <strong>Job ID :</strong> {job.job_id || "N/A"}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -298,29 +298,13 @@ export default async function JobDetail({
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <ClockIcon className="h-5 w-5 text-gray-500" />
-                    <span>
-                      <strong>Job ID :</strong> {job.job_id || "N/A"}
-                    </span>
-                  </div>
-                  
-                </div>
-
-                {/* Pair 3: Experience and Organization Type */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="flex items-center gap-2">
                     <CalendarIcon className="h-5 w-5 text-gray-500" />
                     <span>
-                      <strong>Experience :</strong> {job.experience_min || "N/A"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <GlobeAltIcon className="h-5 w-5 text-gray-500" />
-                    <span>
-                      <strong>Organization Type :</strong> {job.organization_type || "N/A"}
+                      <strong>Experience :</strong> {job.experience_min + " Years" || "N/A"}
                     </span>
                   </div>
                 </div>
+
 
                 {/* Pair 4: Location and Employment Type */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -393,20 +377,38 @@ export default async function JobDetail({
                 </div>
               </div>
 
+
+
               {/* How to Apply */}
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-sm font-semibold text-gray-800 mb-4">How to Apply</h2>
                 <div className="text-gray-600 whitespace-pre-line text-xs">{job.howToApply}</div>
                 <div className="flex items-center w-full pl-4 pb-5 md:pb-6"></div>
-                <h2 className="text-sm font-semibold text-gray-800 mb-4">Frequently Asked Questions</h2>
-                <div className="text-gray-600 whitespace-pre-line text-xs">{job.freeText_01}</div>
-                <div className="text-gray-600 whitespace-pre-line text-xs">{job.freeText_02}</div>
-                <div className="text-gray-600 whitespace-pre-line text-xs">{job.freeText_03}</div>
-                <div className="text-gray-600 whitespace-pre-line text-xs">{job.freeText_04}</div>
-                <div className="text-gray-600 whitespace-pre-line text-xs">{job.freeText_05}</div>
+              </div>
+            </div>
+
+            {/* Organization Details */}
+            <div className="space-y-6 mt-6 bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6 flex flex-col gap-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Organization Details</h2>
+              <div className="flex flex-col gap-3 text-gray-600 text-sm">
+                {/* Pair 1: Organization and Category */}
+                  <div className="flex items-center gap-2">
+                    <BuildingOfficeIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Organization :</strong> {job.organization || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <GlobeAltIcon className="h-5 w-5 text-gray-500" />
+                    <span>
+                      <strong>Organization Details :</strong> {job.organization_type || "N/A"}
+                    </span>
+                  </div>
               </div>
             </div>
           </div>
+
+          
 
           {/* Right-Side Placeholder (1/3 width on desktop) */}
           <div className="md:col-span-1">
