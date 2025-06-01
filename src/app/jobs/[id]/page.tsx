@@ -416,7 +416,7 @@ export default async function JobDetail({
               <div className="space-y-3">
                 {sidejobs.map(job => (
                   <div key={job.title} className="border-b pb-4 last:border-0">
-                    <Link href={`/jobs/${job.id}`}>
+                    <Link href={`/jobs/${job.slug}`}>
                       <div className="flex justify-between items-start">
                         <h3 className="text-sm font-medium text-black">{job.title}</h3>
                         {true && (
