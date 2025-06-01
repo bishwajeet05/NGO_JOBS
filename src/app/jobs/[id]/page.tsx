@@ -316,6 +316,7 @@ export default async function JobDetail({
                         job.city,
                         job.state,
                         job.country,
+                        "PIN - "+job.pin_code,
                       ]
                         .filter(Boolean) // Remove falsy values (null, undefined, '')
                         .join(', ')}
