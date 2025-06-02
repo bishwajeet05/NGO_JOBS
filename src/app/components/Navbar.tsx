@@ -18,13 +18,14 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { name: "Home", path: "/", icon: <Briefcase className="h-4 w-4 mr-2" /> },
-  { name: "Events", path: "/events", icon: <CalendarDays className="h-4 w-4 mr-2" /> },
+  { name: "Jobs", path: "/jobs", icon: <CalendarDays className="h-4 w-4 mr-2" /> },
   { name: "Grants", path: "/grants", icon: <HandCoins className="h-4 w-4 mr-2" /> },
   { name: "News", path: "/news", icon: <Newspaper className="h-4 w-4 mr-2" /> },
 ];
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
   let router;
   try {
     router = useRouter();
@@ -35,12 +36,25 @@ const Navbar = () => {
   // Fallback pathname when router is not available
   const pathname = router?.pathname || "/";
 
+  // Handle scroll event to toggle transparency
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <motion.header
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-subtle"
+      className={cn(
+        "sticky top-0 z-10 w-full bg-gradient-to-r from-blue-600 to-green-500 shadow-md backdrop-blur py-3 px-3 xs:px-4 sm:px-6 lg:px-8",
+        isScrolled ? "bg-opacity-50" : "bg-opacity-100"
+      )}
     >
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
