@@ -14,12 +14,10 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2 text-sm text-black/90">
-              <li><a href="#" className="hover:text-green-300 transition-colors">Home</a></li>
-              <li><a href="#" className="hover:text-green-300 transition-colors">Events</a></li>
-              <li><a href="#" className="hover:text-green-300 transition-colors">News</a></li>
-              <li><a href="#" className="hover:text-green-300 transition-colors">Grants</a></li>
-              <li><a href="#" className="hover:text-green-300 transition-colors">About</a></li>
-              <li><a href="#" className="hover:text-green-300 transition-colors">Post a Job/Event</a></li>
+              <li><a href="/aboutUs" className="hover:text-green-300 transition-colors">About Us</a></li>
+              <li><a href="/contactUs" className="hover:text-green-300 transition-colors">Contact Us</a></li>
+              <li><a href="/disclaimer" className="hover:text-green-300 transition-colors">Disclaimer</a></li>
+              <li><a href="/privacyPolicy" className="hover:text-green-300 transition-colors">Privacy Policy</a></li>
             </ul>
           </div>
       
