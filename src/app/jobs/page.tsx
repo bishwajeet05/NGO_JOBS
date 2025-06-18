@@ -129,7 +129,7 @@ export default async function AllJobs() {
 
         {/* Featured Jobs */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured Jobs</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-[#1a2a3a] leading-snug mb-6">Featured Jobs</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredJobs.map((job) => (
               <Link
@@ -148,19 +148,19 @@ export default async function AllJobs() {
                       className="rounded-full mr-4 border-2 border-indigo-100 p-1"
                     />
                     <div className="flex-1 overflow-hidden">
-                      <h3 className="text-base font-semibold text-gray-900 truncate">{job.title}</h3>
-                      <p className="text-xs text-gray-500 truncate">{job.organization}</p>
+                      <h3 className="text-lg font-bold text-gray-900 tracking-tight truncate">{job.title}</h3>
+                      <p className="text-xs font-medium text-gray-500 truncate">{job.organization}</p>
                     </div>
                   </div>
                   <div className="flex-1 text-xs text-gray-600 space-y-1 overflow-hidden">
                     <div className="flex items-center">
-                      <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded truncate">{job.employmentType}</span>
+                      <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded truncate font-semibold">{job.employmentType}</span>
                     </div>
-                    <div className="truncate">Category: {job.role_category}</div>
-                    <div className="truncate">Salary: {job.salary}</div>
-                    <div className="truncate">Location: {job.city ? `${job.city}, ${job.country}` : job.country}</div>
+                    <div className="truncate font-normal">Category: {job.role_category}</div>
+                    <div className="truncate font-normal">Salary: {job.salary}</div>
+                    <div className="truncate font-normal">Location: {job.city ? `${job.city}, ${job.country}` : job.country}</div>
                   </div>
-                  <div className="text-xs text-gray-500 mt-2 truncate">
+                  <div className="text-xs text-gray-500 mt-2 truncate font-normal">
                     Deadline: {job.valid_through
                         ? new Date(job.valid_through).toISOString().split("T")[0]
                         : "N/A"}
@@ -173,7 +173,7 @@ export default async function AllJobs() {
 
         {/* Latest Jobs */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Latest Jobs</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-[#1a2a3a] leading-snug mb-6">Latest Jobs</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {latestJobs.map((job) => (
               <Link
@@ -192,19 +192,19 @@ export default async function AllJobs() {
                       className="rounded-full mr-4 border-2 border-indigo-100 p-1"
                     />
                     <div className="flex-1 overflow-hidden">
-                      <h3 className="text-base font-semibold text-gray-900 truncate">{job.title}</h3>
-                      <p className="text-xs text-gray-500 truncate">{job.organization}</p>
+                      <h3 className="text-lg font-bold text-gray-900 tracking-tight truncate">{job.title}</h3>
+                      <p className="text-xs font-medium text-gray-500 truncate">{job.organization}</p>
                     </div>
                   </div>
                   <div className="flex-1 text-xs text-gray-600 space-y-1 overflow-hidden">
                     <div className="flex items-center">
-                      <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded truncate">{job.employmentType}</span>
+                      <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded truncate font-semibold">{job.employmentType}</span>
                     </div>
-                    <div className="truncate">Category: {job.role_category}</div>
-                    <div className="truncate">Salary: {job.salary}</div>
-                    <div className="truncate">Location: {job.city ? `${job.city}, ${job.country}` : job.country}</div>
+                    <div className="truncate font-normal">Category: {job.role_category}</div>
+                    <div className="truncate font-normal">Salary: {job.salary}</div>
+                    <div className="truncate font-normal">Location: {job.city ? `${job.city}, ${job.country}` : job.country}</div>
                   </div>
-                  <div className="text-xs text-gray-500 mt-2 truncate">
+                  <div className="text-xs text-gray-500 mt-2 truncate font-normal">
                     Deadline: {job.valid_through
                         ? new Date(job.valid_through).toISOString().split("T")[0]
                         : "N/A"}

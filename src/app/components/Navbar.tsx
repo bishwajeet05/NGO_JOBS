@@ -2,149 +2,167 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { Button } from "./ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from "./ui/navigation-menu";
-import { Briefcase, CalendarDays, Coins as HandCoins, Newspaper, LogIn, UserPlus, Menu } from "lucide-react";
-import { motion } from "framer-motion";
-import { Sheet, SheetTrigger, SheetContent } from "./ui/sheet";
-import { cn } from "@/lib/utils";
+import { Fingerprint, UserPlus, Menu, X, ChevronDown } from "lucide-react";
 
-const navItems = [
-  { name: "Home", path: "/", icon: <Briefcase className="h-4 w-4 mr-2" /> },
-  { name: "Jobs", path: "/jobs", icon: <CalendarDays className="h-4 w-4 mr-2" /> },
-  { name: "Grants", path: "/grants", icon: <HandCoins className="h-4 w-4 mr-2" /> },
-  { name: "News", path: "/news", icon: <Newspaper className="h-4 w-4 mr-2" /> },
+const opportunityLinks = [
+  { name: "Internships", href: "/internships" },
+  { name: "Fellowships", href: "/fellowships" },
+  { name: "Scholarships", href: "/scholarships" },
+];
+
+const navLinks = [
+  { name: "Find Job", href: "/jobs" },
+  { name: "Events", href: "/events" },
+  { name: "Grants", href: "/grants" },
 ];
 
 const Navbar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
-  let router;
-  try {
-    router = useRouter();
-  } catch (error) {
-    console.log("NextRouter is not mounted:", (error as Error).message);
-  }
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isOpportunitiesOpen, setIsOpportunitiesOpen] = React.useState(false);
 
-  // Fallback pathname when router is not available
-  const pathname = router?.pathname || "/";
-
-  // Handle scroll event to toggle transparency
   React.useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
+      setIsScrolled(window.scrollY > 10);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <motion.header
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className={cn(
-        "sticky top-0 z-10 w-full bg-gradient-to-r from-blue-600 to-green-500 shadow-md backdrop-blur py-3 px-3 xs:px-4 sm:px-6 lg:px-8",
-        isScrolled ? "bg-opacity-50" : "bg-opacity-100"
-      )}
+    <header
+      className={`w-full sticky top-0 z-30 transition-all duration-300
+        ${isScrolled
+          ? "bg-white/80 shadow-lg backdrop-blur-md"
+          : "bg-white shadow-sm"}
+      `}
     >
-      <div className="container flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center space-x-2">
-          <img src="/logo-icon.svg" alt="NGO Hiring Logo" className="h-8 w-8" />
-          <span className="text-xl font-bold gradient-text">NGO Hiring</span>
+      <div className="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
+        {/* Logo */}
+        <Link href="/" className="flex items-center mr-4 select-none">
+          <span className="text-2xl font-extrabold tracking-tight text-blue-600 leading-none">Jobsy</span>
         </Link>
 
-        <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList>
-            {navItems.map((item) => (
-              <NavigationMenuItem key={item.name}>
-                <Link href={item.path} passHref legacyBehavior>
-                  <NavigationMenuLink
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      pathname === item.path ? "bg-accent/80 text-accent-foreground" : ""
-                    )}
-                  >
-                    {item.icon} {item.name}
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
+        {/* Mobile Menu Button */}
+        <button
+          className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {isMenuOpen ? (
+            <X className="h-6 w-6 text-gray-600" />
+          ) : (
+            <Menu className="h-6 w-6 text-gray-600" />
+          )}
+        </button>
 
-        <div className="hidden md:flex items-center space-x-2">
-          <Button variant="outline" asChild>
-            <Link href="/post-job">Post a Job/Event</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/login">
-              <LogIn className="mr-2 h-4 w-4" /> Login
+        {/* Desktop Navigation */}
+        <nav className="hidden lg:flex gap-6 flex-1 justify-center">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className="font-semibold text-base tracking-tight text-[#1a2a3a] hover:text-blue-600 transition-colors"
+            >
+              {link.name}
             </Link>
-          </Button>
-          <Button variant="secondary" asChild>
-            <Link href="/register">
-              <UserPlus className="mr-2 h-4 w-4" /> Register
-            </Link>
-          </Button>
-        </div>
-
-        <div className="md:hidden">
-          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right">
-              <div className="flex flex-col space-y-4 mt-8">
-                <Link href="/" className="flex items-center space-x-2 mb-6" onClick={() => setIsMobileMenuOpen(false)}>
-                  <img src="/logo-icon.svg" alt="NGO Hiring Logo" className="h-8 w-8" />
-                  <span className="text-xl font-bold gradient-text">NGO Hiring</span>
-                </Link>
-                {navItems.map((item) => (
+          ))}
+          {/* All Opportunities Dropdown */}
+          <div className="relative">
+            <button
+              className="font-semibold text-base tracking-tight text-[#1a2a3a] hover:text-blue-600 transition-colors flex items-center gap-1"
+              onClick={() => setIsOpportunitiesOpen(!isOpportunitiesOpen)}
+            >
+              All Opportunities <ChevronDown className="h-4 w-4" />
+            </button>
+            {isOpportunitiesOpen && (
+              <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                {opportunityLinks.map((link) => (
                   <Link
-                    key={item.name}
-                    href={item.path}
-                    className={cn(
-                      "flex items-center py-2 px-3 rounded-md text-lg font-medium hover:bg-accent hover:text-accent-foreground",
-                      pathname === item.path ? "bg-accent text-accent-foreground" : ""
-                    )}
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    key={link.name}
+                    href={link.href}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+                    onClick={() => setIsOpportunitiesOpen(false)}
                   >
-                    {item.icon} {item.name}
+                    {link.name}
                   </Link>
                 ))}
-                <div className="pt-4 border-t border-border">
-                  <Button variant="outline" className="w-full mb-2" asChild onClick={() => setIsMobileMenuOpen(false)}>
-                    <Link href="/post-job">Post a Job/Event</Link>
-                  </Button>
-                  <Button className="w-full mb-2" asChild onClick={() => setIsMobileMenuOpen(false)}>
-                    <Link href="/login">
-                      <LogIn className="mr-2 h-4 w-4" /> Login
-                    </Link>
-                  </Button>
-                  <Button variant="secondary" className="w-full" asChild onClick={() => setIsMobileMenuOpen(false)}>
-                    <Link href="/register">
-                      <UserPlus className="mr-2 h-4 w-4" /> Register
-                    </Link>
-                  </Button>
-                </div>
               </div>
-            </SheetContent>
-          </Sheet>
+            )}
+          </div>
+        </nav>
+
+        {/* Desktop Actions */}
+        <div className="hidden lg:flex items-center gap-2 ml-4">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base tracking-tight px-5 py-2 rounded-lg shadow-none border-none" asChild>
+            <Link href="/post-job">Post a Job/Event</Link>
+          </Button>
+          <Button variant="outline" className="flex items-center gap-2 px-5 py-2 rounded-lg font-semibold text-base tracking-tight border-gray-300 text-gray-800 hover:bg-gray-100" asChild>
+            <Link href="/login">
+              <Fingerprint className="h-4 w-4" /> Login
+            </Link>
+          </Button>
+        </div>
+
+        {/* Mobile Menu */}
+        <div className={`lg:hidden fixed inset-0 z-50 transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out`}>
+          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setIsMenuOpen(false)} />
+          <div className="absolute right-0 h-full w-64 bg-white shadow-xl flex flex-col">
+            <div className="p-4 border-b">
+              <button
+                className="p-2 rounded-lg hover:bg-gray-100 float-right"
+                onClick={() => setIsMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                <X className="h-6 w-6 text-gray-600" />
+              </button>
+            </div>
+            <nav className="flex flex-col p-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="py-3 px-4 text-[#1a2a3a] hover:bg-gray-50 rounded-lg font-semibold"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              {/* Mobile All Opportunities Section */}
+              <div className="py-3 px-4 text-[#1a2a3a] font-semibold">
+                All Opportunities
+              </div>
+              {opportunityLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="py-2 px-8 text-[#1a2a3a] hover:bg-gray-50 rounded-lg text-sm"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <hr className="my-4" />
+              <Link
+                href="/post-job"
+                className="py-3 px-4 bg-blue-600 text-white rounded-lg font-semibold text-center mb-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Post a Job/Event
+              </Link>
+              <Link
+                href="/login"
+                className="py-3 px-4 border border-gray-300 text-gray-800 rounded-lg font-semibold text-center flex items-center justify-center gap-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Fingerprint className="h-4 w-4" /> Login
+              </Link>
+            </nav>
+          </div>
         </div>
       </div>
-    </motion.header>
+    </header>
   );
 };
 
