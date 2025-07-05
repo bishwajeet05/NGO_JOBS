@@ -40,12 +40,11 @@ pool.query('SELECT NOW()')
     console.log('Database connection established');
   })
   .catch((err: Error) => {
-    console.log('Error connecting to the database:', err);
+    console.error('Error connecting to the database:', err);
   });
 
 export async function query(text: string, params?: any[]) {
   const client = await pool.connect();
-  alert('Connected to the database');
   try {
     const res = await client.query(text, params);
     return res;
@@ -53,7 +52,5 @@ export async function query(text: string, params?: any[]) {
     client.release();
   }
 }
-
-
 
 export default pool;

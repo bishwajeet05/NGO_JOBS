@@ -2,6 +2,10 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
+import Image from 'next/image';
+import { BarChart2, Briefcase, User, Settings as SettingsIcon, LogOut, Menu, Users as UsersIcon, FileText, Bell, CreditCard, LifeBuoy, LayoutGrid, Layers } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import EmployerSidebar from '../EmployerSidebar';
 
 type Job = {
   id: string;
@@ -38,6 +42,7 @@ type Job = {
   street_address: string;
   is_remote: boolean;
   is_active: boolean;
+  featured: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -49,6 +54,8 @@ export default function AdminPanel() {
   const { register, handleSubmit, reset, setValue, getValues, watch } = useForm<Job>();
   const descriptionEditorRef = useRef<HTMLDivElement>(null);
   const howToApplyEditorRef = useRef<HTMLDivElement>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const router = useRouter();
 
   // Watch for changes in title, city, and state to generate slug
   const title = watch("title");
@@ -263,10 +270,41 @@ export default function AdminPanel() {
     setEditingJob(job);
   };
 
+  // Sidebar items for admin
+  const sidebarItems = [
+    { icon: BarChart2, label: 'Dashboard', href: '/dashboard' },
+    { icon: Briefcase, label: 'Add Jobs', href: '/dashboard/add-jobs' },
+    { icon: FileText, label: 'Analytics', href: '/dashboard/analytics' },
+    { icon: UsersIcon, label: 'Users', href: '/dashboard/users' },
+    { icon: LayoutGrid, label: 'Applications', href: '/dashboard/applications' },
+    { icon: CreditCard, label: 'Payments', href: '/dashboard/payments' },
+    { icon: Bell, label: 'Notifications', href: '/dashboard/notifications' },
+    { icon: SettingsIcon, label: 'Settings', href: '/dashboard/settings' },
+    { icon: LifeBuoy, label: 'Support', href: '/dashboard/support' },
+    { icon: Layers, label: 'Content', href: '/dashboard/content' },
+    { icon: Layers, label: 'Integrations', href: '/dashboard/integrations' },
+    { icon: LogOut, label: 'Log Out' },
+  ];
+
   return (
-    <div className="px-4 sm:px-6 lg:px-6 py-0 flex flex-col md:flex-row gap-6 text-black w-full">
-      {/* Left: Jobs List */}
-      <div className="md:w-3/10 bg-gray-100 p-4 rounded overflow-auto shadow-sm">
+    <div className="min-h-screen bg-[#f6f8fb] flex flex-col md:flex-row">
+      {/* Mobile Topbar */}
+      <header className="md:hidden flex items-center justify-between bg-white px-4 py-3 shadow-sm sticky top-0 z-30">
+        <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-md hover:bg-gray-100">
+          <Menu className="w-6 h-6 text-indigo-600" />
+        </button>
+        <span className="font-extrabold text-lg text-gray-800">Admin Dashboard</span>
+        <Image src="/images/wa.jpg" alt="User" width={36} height={36} className="rounded-full border-2 border-indigo-200" />
+      </header>
+
+      {/* Sidebar - Mobile Drawer & Desktop */}
+      <EmployerSidebar />
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col gap-6 p-4 md:p-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Jobs List */}
+          <section className="bg-white rounded-lg shadow-md p-6 overflow-auto">
         <h2 className="text-xl font-bold mb-4">Jobs</h2>
         <div className="space-y-2">
           {jobs.length === 0 ? (
@@ -282,6 +320,12 @@ export default function AdminPanel() {
                 <p className="text-sm text-gray-600">
                   {job.organization || "Unknown Organization"}
                 </p>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">{job.employment_type}</span>
+                      {job.role_category && job.role_category !== job.employment_type && (
+                        <span className="bg-green-50 text-green-700 px-2 py-1 rounded text-xs font-semibold">{job.role_category}</span>
+                      )}
+                    </div>
                 <div className="flex gap-2 mt-2">
                   <button
                     onClick={(e) => {
@@ -306,10 +350,10 @@ export default function AdminPanel() {
             ))
           )}
         </div>
-      </div>
+          </section>
 
-      {/* Right: Job Form */}
-      <div className="md:w-7/10 bg-gray-100 p-4 rounded shadow-sm">
+          {/* Job Form */}
+          <section className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-bold mb-4">{editingJob ? "Edit Job" : "Add Job"}</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Basic Info */}
@@ -508,7 +552,7 @@ export default function AdminPanel() {
                     ref={howToApplyEditorRef}
                     contentEditable
                     onInput={() => updateFormValue('how_to_apply')}
-                    className="min-h-[200px] p-2 border rounded bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                        className="min-h-[100px] p-2 border rounded bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
                     style={{ whiteSpace: 'pre-wrap' }}
                   />
                 </div>
@@ -525,7 +569,7 @@ export default function AdminPanel() {
                   Employment Type <span className="text-red-500">*</span>
                 </label>
                 <select
-                  {...register("role_category", { required: true })}
+                      {...register("employment_type", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   <option value="" disabled>Select Employment Type</option>
@@ -546,7 +590,7 @@ export default function AdminPanel() {
                   Category <span className="text-red-500">*</span>
                 </label>
                 <select
-                  {...register("employment_type", { required: true })}
+                      {...register("role_category", { required: true })}
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   <option value="" disabled>Select Category Type</option>
@@ -578,6 +622,14 @@ export default function AdminPanel() {
                   <option value="Other">Other</option>
                 </select>
               </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium">Role Type<span className="text-red-500">*</span></label>
+                <input
+                  {...register("role_type", { required: true })}
+                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="e.g. Full-time, Part-time, Contractual"
+                />
+              </div>
             </div>
           </div>
 
@@ -592,6 +644,15 @@ export default function AdminPanel() {
                   className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                   type="number"
                   min="0"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium">Experience Max<span className="text-red-500">*</span></label>
+                <input
+                  type="number"
+                  {...register("experience_max", { required: true })}
+                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="Maximum years of experience"
                 />
               </div>
             </div>
@@ -775,19 +836,53 @@ export default function AdminPanel() {
           </div>
 
           {/* Status */}
-          <div>
-            <h3 className="text-lg font-semibold mb-2"></h3>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex items-center gap-2">
-                <input
-                  {...register("is_active")}
-                  type="checkbox"
-                  className="h-4 w-4"
-                  id="is_active"
+          <div className="mb-2">
+            <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm">Status</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+              <div>
+                <h3 className="text-base font-semibold mb-1"></h3>
+                <div className="flex items-center gap-1">
+                  <input
+                    {...register("is_active")}
+                    type="checkbox"
+                    className="h-3.5 w-3.5"
+                    id="is_active"
+                  />
+                  <label htmlFor="is_active" className="text-base font-medium">
+                    Active
+                  </label>
+                </div>
+                {/* Featured Checkbox */}
+                <div className="flex items-center gap-1 mt-2">
+                  <input
+                    {...register("featured")}
+                    type="checkbox"
+                    className="h-3.5 w-3.5"
+                    id="featured"
+                  />
+                  <label htmlFor="featured" className="text-base font-medium">
+                    Mark as Featured
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <label className="block text-sm font-medium">Qualifications<span className="text-red-500">*</span></label>
+                <textarea
+                  {...register("qualifications", { required: true })}
+                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                  rows={2}
                 />
-                <label htmlFor="is_active" className="text-sm font-medium">
-                  Active
-                </label>
+              </div>
+
+              <div className="flex-1">
+                <label className="block text-sm font-medium">Education Required<span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  {...register("education_required", { required: true })}
+                  className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="e.g. Bachelors, Masters, etc."
+                />
               </div>
             </div>
           </div>
@@ -815,36 +910,38 @@ export default function AdminPanel() {
             )}
           </div>
         </form>
-      </div>
-
-      {/* Details Modal */}
-      {viewingJob && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-lg sm:max-w-2xl max-h-[80vh] overflow-y-auto shadow-lg">
-            <h2 className="text-xl font-bold mb-4">{viewingJob.title}</h2>
-            <div className="grid grid-cols-1 gap-2 text-sm">
-              {Object.entries(viewingJob).map(([key, value]) => (
-                <p key={key} className="capitalize">
-                  <strong>{key.replace(/_/g, " ")}:</strong>{" "}
-                  {key === "description" || key === "how_to_apply" ? (
-                    <span dangerouslySetInnerHTML={{ __html: String(value) }} />
-                  ) : typeof value === "boolean" ? (
-                    value.toString()
-                  ) : (
-                    value || "N/A"
-                  )}
-                </p>
-              ))}
-            </div>
-            <button
-              onClick={() => setViewingJob(null)}
-              className="mt-4 bg-gray-500 text-black px-4 py-2 rounded hover:bg-gray-600 transition-colors w-full sm:w-auto"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      </section>
     </div>
-  );
-}
+  </main>
+
+  {/* Details Modal */}
+  {viewingJob && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white p-6 rounded-lg w-full max-w-lg sm:max-w-2xl max-h-[80vh] overflow-y-auto shadow-lg">
+        <h2 className="text-xl font-bold mb-4">{viewingJob.title}</h2>
+        <div className="grid grid-cols-1 gap-2 text-sm">
+          {Object.entries(viewingJob).map(([key, value]) => (
+            <p key={key} className="capitalize">
+              <strong>{key.replace(/_/g, " ")}:</strong>{" "}
+              {key === "description" || key === "how_to_apply" ? (
+                <span dangerouslySetInnerHTML={{ __html: String(value) }} />
+              ) : typeof value === "boolean" ? (
+                value.toString()
+              ) : (
+                value || "N/A"
+              )}
+            </p>
+          ))}
+        </div>
+        <button
+          onClick={() => setViewingJob(null)}
+          className="mt-4 bg-gray-500 text-black px-4 py-2 rounded hover:bg-gray-600 transition-colors w-full sm:w-auto"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  )}
+</div>
+);
+} 

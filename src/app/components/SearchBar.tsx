@@ -17,7 +17,7 @@ export default function SearchBar() {
 
   return (
     <motion.form
-      className="flex flex-col sm:flex-row items-stretch gap-3 sm:gap-0 bg-white rounded-lg shadow-lg border border-gray-200 max-w-2xl w-full overflow-hidden"
+      className="flex flex-col sm:flex-row items-stretch gap-3 sm:gap-0 bg-white rounded-lg shadow-lg border border-gray-200 max-w-4xl w-full overflow-hidden"
       animate={{ boxShadow: isFocused ? "0 4px 24px 0 rgba(31, 38, 135, 0.14)" : "0 2px 16px 0 rgba(31, 38, 135, 0.08)" }}
       role="search"
       onFocus={() => setIsFocused(true)}
@@ -25,29 +25,29 @@ export default function SearchBar() {
       tabIndex={-1}
     >
       {/* What are you looking for? */}
-      <div className="flex items-center gap-2 px-4 py-3 flex-[2] min-w-[140px] border-b sm:border-b-0 sm:border-r border-gray-200">
-        <FaSearch className="text-blue-500 text-lg flex-shrink-0" />
+      <div className="flex items-center gap-4 px-6 py-4 flex-[2] min-w-[140px] border-b sm:border-b-0 sm:border-r border-gray-200">
+        <FaSearch className="text-blue-500 text-xl flex-shrink-0" />
         <input
           type="text"
           placeholder="Job title, skills, or NGO"
-          className="bg-transparent outline-none border-0 text-sm sm:text-base w-full placeholder:text-gray-400"
+          className="bg-transparent outline-none border-0 text-base sm:text-lg w-full placeholder:text-gray-400"
         />
       </div>
 
       {/* Location */}
-      <div className="flex items-center gap-2 px-4 py-3 flex-1 min-w-[120px] border-b sm:border-b-0 sm:border-r border-gray-200">
-        <FaMapMarkerAlt className="text-blue-500 text-lg flex-shrink-0" />
+      <div className="flex items-center gap-4 px-6 py-4 flex-1 min-w-[120px] border-b sm:border-b-0 sm:border-r border-gray-200">
+        <FaMapMarkerAlt className="text-blue-500 text-xl flex-shrink-0" />
         <input
           type="text"
           placeholder="City or State"
-          className="bg-transparent outline-none border-0 text-sm sm:text-base w-full placeholder:text-gray-400"
+          className="bg-transparent outline-none border-0 text-base sm:text-lg w-full placeholder:text-gray-400"
         />
       </div>
 
       {/* Category */}
       <div className="flex items-center">
       <Select.Root value={category} onValueChange={setCategory}>
-          <Select.Trigger className="flex items-center gap-2 px-4 py-3 bg-transparent text-sm sm:text-base w-full min-w-[120px] outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer flex-shrink-0 font-medium text-[#1a2a3a] border-b sm:border-b-0 sm:border-r border-gray-200">
+          <Select.Trigger className="flex items-center gap-2 px-6 py-4 bg-transparent text-base sm:text-lg w-full min-w-[120px] outline-none focus:ring-2 focus:ring-blue-200 cursor-pointer flex-shrink-0 font-medium text-[#1a2a3a] border-b sm:border-b-0 sm:border-r border-gray-200">
           <Select.Value placeholder="Category" />
           <Select.Icon>
             <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><path d="M6 8l4 4 4-4" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -77,7 +77,7 @@ export default function SearchBar() {
 
       <motion.button
         type="submit"
-        className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 text-sm sm:text-base transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300 flex items-center justify-center gap-2"
+        className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 text-base sm:text-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300 flex items-center justify-center gap-2"
         whileTap={{ scale: 0.97 }}
       >
         Search <FaArrowRight className="text-sm" />

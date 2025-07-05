@@ -253,14 +253,25 @@ export default async function JobDetail({
                 {/* Right side: Apply Button */}
                 <div className="flex items-start justify-end">
                   {job && job.applylink ? (
-                    <a
-                      href={`https://${job.applylink}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 sm:py-3 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center"
-                    >
-                      Apply Online
-                    </a>
+                    job.user_id === 'superadmin' ? (
+                      <a
+                        href={`https://${job.applylink}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-green-800 hover:bg-green-700 text-white px-4 py-2 sm:py-3 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center"
+                      >
+                        Redirect To Recruiter
+                      </a>
+                    ) : (
+                      <a
+                        href={`https://${job.applylink}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-blue-800 hover:bg-blue-700 text-white px-4 py-2 sm:py-3 rounded-md text-xs sm:text-sm font-medium transition-colors flex items-center justify-center"
+                      >
+                        Apply Online
+                      </a>
+                    )
                   ) : (
                     <span className="text-red-500">No application link available</span>
                   )}

@@ -1,9 +1,9 @@
 "use client";
-
 import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
-import { Fingerprint, UserPlus, Menu, X, ChevronDown } from "lucide-react";
+import { Fingerprint, UserPlus, Menu, X, ChevronDown, Bell, User } from "lucide-react";
 
 const opportunityLinks = [
   { name: "Internships", href: "/internships" },
@@ -17,7 +17,33 @@ const navLinks = [
   { name: "Grants", href: "/grants" },
 ];
 
+const SuperAdminNavbar = () => (
+  <header className="w-full sticky top-0 z-30 bg-white shadow-sm">
+    <div className="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
+      {/* Logo left-aligned */}
+      <Link href="/super-admin" className="flex items-center select-none">
+        <span className="text-2xl font-extrabold tracking-tight text-blue-600 leading-none">Jobsy</span>
+      </Link>
+      <div className="flex items-center gap-6">
+        {/* Super Admin Avatar */}
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+            <User className="text-white w-6 h-6" />
+          </div>
+          <span className="font-medium text-gray-800 hidden md:inline">Super Admin</span>
+        </div>
+        {/* Notification Bell */}
+        <div className="relative">
+          <Bell className="w-7 h-7 text-gray-500" />
+          <span className="absolute -top-2 -right-2 bg-orange-400 text-white text-xs font-bold rounded-full px-2 py-0.5">12</span>
+        </div>
+      </div>
+    </div>
+  </header>
+);
+
 const Navbar = () => {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isOpportunitiesOpen, setIsOpportunitiesOpen] = React.useState(false);
@@ -29,6 +55,11 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // If on a super-admin route, show the super-admin navbar
+  if (pathname && pathname.startsWith('/super-admin')) {
+    return <SuperAdminNavbar />;
+  }
 
   return (
     <header

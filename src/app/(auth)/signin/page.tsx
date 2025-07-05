@@ -12,27 +12,33 @@ export default function SignIn() {
   console.log("SignIn")
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("handleSubmit")
+    console.log("Login attempt for:", email);
     e.preventDefault();
     setError('');
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/signin`, {
+      const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
+        credentials: 'include', // ensures cookies are set
       });
 
+      const data = await res.json();
       if (!res.ok) {
-        const { error } = await res.json();
-        throw new Error(error);
+        throw new Error(data.error);
       }
-      
-      const { token } = await res.json();
-      document.cookie = `token=${token}; path=/`;
-      //router.push('/dashboard');
-      await router.push('/profile');
-      console.log("qwerfghjk")
+
+      // No need to set token cookie in JS
+      if (data.user.role === 'candidate') {
+        await router.push('/quick-login/candidate');
+      } else if (data.user.role === 'employer') {
+        await router.push('/employer/dashboard');
+      } else if (data.user.role === 'super_admin' || data.user.role === 'admin') {
+        await router.push('/super-admin');
+      } else {
+        await router.push('/');
+      }
     } catch (err: any) {
       setError(err.message);
     }

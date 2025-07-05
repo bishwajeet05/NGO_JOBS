@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="a" x1="62.1" x2="116.1" y1="133.5" y2="133.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#cfd8dc"/>
+      <stop offset="1" stop-color="#b0bec5"/>
+    </linearGradient>
+    <linearGradient id="b" x1="84.2" x2="138.2" y1="126.3" y2="126.3" href="#a"/>
+    <linearGradient id="c" x1="125" x2="167" y1="131" y2="131" href="#a"/>
+  </defs>
+  <path fill="#f0f4f8" d="M0 0h200v200H0z"/>
+  <path fill="#fff" d="M165 170H35a5 5 0 0 1-5-5V35a5 5 0 0 1 5-5h130a5 5 0 0 1 5 5v130a5 5 0 0 1-5 5z"/>
+  <path fill="#e3e8ee" d="M165 30H35a5 5 0 0 0-5 5v5h140V35a5 5 0 0 0-5-5z"/>
+  <circle cx="45" cy="35" r="3" fill="#ff7043"/>
+  <circle cx="55" cy="35" r="3" fill="#ffca28"/>
+  <circle cx="65" cy="35" r="3" fill="#66bb6a"/>
+  <circle cx="100" cy="100" r="30" fill="#42a5f5"/>
+  <path fill="#fff" d="m90 90-7 20h34l-7-20z"/>
+  <circle cx="100" cy="85" r="8" fill="#fff"/>
+  <path d="M120 160H80a5 5 0 0 1-5-5v-15h50v15a5 5 0 0 1-5 5z" fill="#90a4ae"/>
+  <path d="M116.1 140H62.1a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h54a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2z" fill="url(#a)"/>
+  <path d="M138.2 133.2H84.2a2 2 0 0 1-2-2v-10a2 2 0 0 1 2-2h54a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z" fill="url(#b)"/>
+  <path d="M167 138v-5a2 2 0 0 0-2-2H125a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h40a2 2 0 0 0 2-2z" fill="url(#c)"/>
+</svg> 
