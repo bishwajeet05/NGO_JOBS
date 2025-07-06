@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const FilterSection = ({ title, children, defaultOpen = false }: { title: string; children: ReactNode; defaultOpen?: boolean }) => {
@@ -30,58 +30,275 @@ const Checkbox = ({ label, count }: { label: string; count: string }) => (
   </div>
 );
 
-const JobFilter = () => {
+const categories = [
+  'Education',
+  'Health',
+  'Livelihoods',
+  'CSR',
+  'Child Rights & Protection',
+  'Programme Management',
+  'Communications',
+  'Public Health',
+  'Finance',
+  'M&E',
+  'Partnerships',
+  'Climate',
+  // ...add more as needed
+];
+
+const employmentTypes = [
+  'Full-time',
+  'Part-time',
+  'Contract',
+  'Internship',
+  'Volunteer',
+];
+
+const experienceOptions = [
+  { label: '0–1 years', value: '0-1' },
+  { label: '2–4 years', value: '2-4' },
+  { label: '5+ years', value: '5+' },
+];
+
+const postedDateOptions = [
+  { label: 'Any time', value: '' },
+  { label: 'Last 24 hours', value: '1' },
+  { label: 'Last 7 days', value: '7' },
+  { label: 'Last 30 days', value: '30' },
+];
+
+const qualifications = [
+  'Bachelors',
+  'Masters',
+  'PhD',
+  'Diploma',
+  'Certification',
+  // ...add more as needed
+];
+
+const skills = [
+  'Project Management',
+  'Data Analysis',
+  'Fieldwork',
+  'Fundraising',
+  'Training',
+  'Advocacy',
+  // ...add more as needed
+];
+
+const countries = ['India'];
+const states = ['Delhi', 'Karnataka', 'West Bengal', 'Telangana', 'Gujarat', 'Maharashtra', 'Tamil Nadu'];
+const cities = ['Delhi', 'Bangalore', 'Kolkata', 'Hyderabad', 'Ahmedabad', 'Mumbai', 'Chennai'];
+
+export default function JobFilter({ onChange, filters }: { onChange: (filters: any) => void, filters: any }) {
+  // Local state for multi-selects
+  const [selectedSkills, setSelectedSkills] = useState<string[]>(filters.skills || []);
+  const [selectedQualifications, setSelectedQualifications] = useState<string[]>(filters.qualifications || []);
+
+  // Handlers
+  const handleInput = (key: string, value: any) => {
+    onChange({ [key]: value });
+  };
+  const handleMultiSelect = (key: string, value: string) => {
+    let arr = key === 'skills' ? [...selectedSkills] : [...selectedQualifications];
+    if (arr.includes(value)) {
+      arr = arr.filter((v) => v !== value);
+    } else {
+      arr.push(value);
+    }
+    if (key === 'skills') setSelectedSkills(arr);
+    else setSelectedQualifications(arr);
+    onChange({ [key]: arr });
+  };
+
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg w-full">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold text-gray-900">All Filters</h2>
-        <a href="#" className="text-sm font-medium text-blue-600 hover:underline">
-          Applied (1)
-        </a>
+    <aside className="sticky top-8 w-full max-w-xs bg-gray-50 border border-gray-100 rounded-md shadow-sm p-5 font-sans">
+      <h2 className="text-lg font-semibold text-gray-900 mb-6 tracking-tight">Job Search Filters</h2>
+      {/* 1. Keyword Search */}
+      <div className="mb-6">
+        <label className="block text-xs font-medium text-gray-600 mb-2 uppercase tracking-wider">Keyword</label>
+        <input
+          type="text"
+          className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 focus:ring-2 focus:ring-blue-100 focus:border-blue-200 outline-none text-gray-900 text-sm transition"
+          placeholder="Job title, skills, or organization"
+          value={filters.keyword || ''}
+          onChange={e => handleInput('keyword', e.target.value)}
+        />
       </div>
-
-      <FilterSection title="Work mode" defaultOpen={true}>
-        <Checkbox label="Work from office" count="536062" />
-        <Checkbox label="Remote" count="21566" />
-        <Checkbox label="Hybrid" count="15333" />
-        <Checkbox label="Temp. WFH due to..." count="13" />
-      </FilterSection>
-
-      <FilterSection title="Experience" defaultOpen={true}>
-        <div className="relative">
-          <input type="range" min="0" max="30" defaultValue="5" className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-          <div className="flex justify-between text-xs text-gray-500 mt-2">
-            <span>0 Yrs</span>
-            <span>Any</span>
-          </div>
+      <hr className="my-4 border-gray-200" />
+      {/* 2. Location */}
+      <div className="mb-6">
+        <div className="mb-3">
+          <label className="block text-xs font-medium text-gray-600 uppercase tracking-wider mb-1">Country</label>
+          <select
+            className="w-full rounded-md border border-gray-200 bg-gray-50 px-2 py-2 text-gray-900 text-xs"
+            value={filters.country || 'India'}
+            onChange={e => handleInput('country', e.target.value)}
+          >
+            {countries.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
         </div>
-      </FilterSection>
-
-      <FilterSection title="Department" defaultOpen={true}>
-        <Checkbox label="Engineering - Software" count="11733" />
-        <Checkbox label="Sales & Business" count="1730" />
-        <Checkbox label="Customer Success" count="997" />
-        <Checkbox label="Data Science & Analytics" count="944" />
-        <a href="#" className="text-sm font-medium text-blue-600 hover:underline mt-2 inline-block">View More</a>
-      </FilterSection>
-
-      <FilterSection title="Location" defaultOpen={true}>
-        <Checkbox label="Bengaluru" count="1401" />
-        <Checkbox label="Delhi / NCR" count="1260" />
-        <Checkbox label="Hyderabad" count="765" />
-        <Checkbox label="Pune" count="658" />
-        <a href="#" className="text-sm font-medium text-blue-600 hover:underline mt-2 inline-block">View More</a>
-      </FilterSection>
-
-      <FilterSection title="Salary" defaultOpen={true}>
-        <Checkbox label="0-3 Lakhs" count="3389" />
-        <Checkbox label="3-6 Lakhs" count="10368" />
-        <Checkbox label="6-10 Lakhs" count="13275" />
-        <Checkbox label="10-15 Lakhs" count="7719" />
-        <a href="#" className="text-sm font-medium text-blue-600 hover:underline mt-2 inline-block">View More</a>
-      </FilterSection>
-    </div>
+        <div className="mb-3">
+          <label className="block text-xs font-medium text-gray-600 uppercase tracking-wider mb-1">State</label>
+          <select
+            className="w-full rounded-md border border-gray-200 bg-gray-50 px-2 py-2 text-gray-900 text-xs"
+            value={filters.state || ''}
+            onChange={e => handleInput('state', e.target.value)}
+          >
+            <option value="">State</option>
+            {states.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-gray-600 uppercase tracking-wider mb-1">City</label>
+          <select
+            className="w-full rounded-md border border-gray-200 bg-gray-50 px-2 py-2 text-gray-900 text-xs"
+            value={filters.city || ''}
+            onChange={e => handleInput('city', e.target.value)}
+          >
+            <option value="">City</option>
+            {cities.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+      </div>
+      <hr className="my-4 border-gray-200" />
+      {/* 3. Category */}
+      <div className="mb-6">
+        <label className="block text-xs font-medium text-gray-600 mb-2 uppercase tracking-wider">Category</label>
+        <select
+          className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 text-sm"
+          value={filters.category || ''}
+          onChange={e => handleInput('category', e.target.value)}
+        >
+          <option value="">All Categories</option>
+          {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+        </select>
+      </div>
+      <hr className="my-4 border-gray-200" />
+      {/* 4. Employment Type */}
+      <div className="mb-6">
+        <label className="block text-xs font-medium text-gray-600 mb-2 uppercase tracking-wider">Employment Type</label>
+        <select
+          className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 text-sm"
+          value={filters.employmentType || ''}
+          onChange={e => handleInput('employmentType', e.target.value)}
+        >
+          <option value="">All Types</option>
+          {employmentTypes.map(type => <option key={type} value={type}>{type}</option>)}
+        </select>
+      </div>
+      <hr className="my-4 border-gray-200" />
+      {/* 5. Experience Required */}
+      <div className="mb-6">
+        <label className="block text-xs font-medium text-gray-600 mb-2 uppercase tracking-wider">Experience Required</label>
+        <select
+          className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 text-sm"
+          value={filters.experience || ''}
+          onChange={e => handleInput('experience', e.target.value)}
+        >
+          <option value="">Any</option>
+          {experienceOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+        </select>
+      </div>
+      <hr className="my-4 border-gray-200" />
+      {/* 6. Qualifications / Skills */}
+      <div className="mb-6">
+        <label className="block text-xs font-medium text-gray-600 mb-2 uppercase tracking-wider">Qualifications</label>
+        <div className="flex flex-wrap gap-2 mb-2">
+          {qualifications.map(q => (
+            <button
+              key={q}
+              type="button"
+              className={`px-3 py-1 rounded-2xl border text-xs font-medium transition ${selectedQualifications.includes(q) ? 'bg-blue-50 border-blue-400 text-blue-700' : 'bg-gray-50 border-gray-200 text-gray-700 hover:border-blue-200'}`}
+              onClick={() => handleMultiSelect('qualifications', q)}
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+        <label className="block text-xs font-medium text-gray-600 mb-2 uppercase tracking-wider mt-3">Skills</label>
+        <div className="flex flex-wrap gap-2">
+          {skills.map(s => (
+            <button
+              key={s}
+              type="button"
+              className={`px-3 py-1 rounded-2xl border text-xs font-medium transition ${selectedSkills.includes(s) ? 'bg-green-50 border-green-400 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-700 hover:border-green-200'}`}
+              onClick={() => handleMultiSelect('skills', s)}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+      <hr className="my-4 border-gray-200" />
+      {/* 7. Salary Range */}
+      <div className="mb-6 grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-2 uppercase tracking-wider">Min Salary (INR)</label>
+          <input
+            type="number"
+            className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 text-sm"
+            value={filters.minSalary || ''}
+            onChange={e => handleInput('minSalary', e.target.value)}
+            min={0}
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-2 uppercase tracking-wider">Max Salary (INR)</label>
+          <input
+            type="number"
+            className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 text-sm"
+            value={filters.maxSalary || ''}
+            onChange={e => handleInput('maxSalary', e.target.value)}
+            min={0}
+          />
+        </div>
+      </div>
+      <hr className="my-4 border-gray-200" />
+      {/* 8. Posted Date */}
+      <div className="mb-6">
+        <label className="block text-xs font-medium text-gray-600 mb-2 uppercase tracking-wider">Posted Date</label>
+        <select
+          className="w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 text-sm"
+          value={filters.postedDate || ''}
+          onChange={e => handleInput('postedDate', e.target.value)}
+        >
+          {postedDateOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+        </select>
+      </div>
+      <hr className="my-4 border-gray-200" />
+      {/* 9. Valid Through (Deadline) */}
+      <div className="mb-6 flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={!!filters.openOnly}
+          onChange={e => handleInput('openOnly', e.target.checked)}
+          className="h-4 w-4 rounded border-gray-200 text-blue-600 focus:ring-blue-200"
+        />
+        <label className="text-xs text-gray-700">Show only open jobs (not expired)</label>
+      </div>
+      <hr className="my-4 border-gray-200" />
+      {/* 10. Job Status */}
+      <div className="mb-2 flex items-center gap-6">
+        <label className="flex items-center gap-2 text-xs text-gray-700">
+          <input
+            type="checkbox"
+            checked={!!filters.activeOnly}
+            onChange={e => handleInput('activeOnly', e.target.checked)}
+            className="h-4 w-4 rounded border-gray-200 text-blue-600 focus:ring-blue-200"
+          />
+          Active
+        </label>
+        <label className="flex items-center gap-2 text-xs text-gray-700">
+          <input
+            type="checkbox"
+            checked={!!filters.featuredOnly}
+            onChange={e => handleInput('featuredOnly', e.target.checked)}
+            className="h-4 w-4 rounded border-gray-200 text-yellow-500 focus:ring-yellow-200"
+          />
+          Featured Only
+        </label>
+      </div>
+    </aside>
   );
-};
-
-export default JobFilter; 
+} 

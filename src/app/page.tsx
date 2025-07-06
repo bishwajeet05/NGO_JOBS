@@ -1,3 +1,4 @@
+"use client";
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -5,6 +6,7 @@ import JobTabs from './components/JobTabs';
 import StateCarousel from './components/StateCarousel';
 import { FaSearch, FaMapMarkerAlt, FaCalendarAlt } from 'react-icons/fa';
 import SearchBar from './components/SearchBar';
+import { useRouter } from 'next/navigation';
 
 const eventCards = [
   {
@@ -112,6 +114,18 @@ const fundingCards = [
 ];
 
 export default function Home() {
+  const router = useRouter();
+
+  // Handler for dashboard search
+  const handleDashboardSearch = (search: string, location: string, category: string) => {
+    // Build query string
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+    if (location) params.append('location', location);
+    if (category) params.append('category', category);
+    router.push(`/jobs${params.toString() ? `?${params.toString()}` : ''}`);
+  };
+
   return (
     <div className="w-full bg-[#eaf4fb] min-h-screen flex flex-col">
       <Head>
@@ -128,7 +142,7 @@ export default function Home() {
             Explore jobs, fellowships, internships, scholarships, events, and grants from over 1,000 NGOs.
           </p>
         </div>
-        <SearchBar />
+        <SearchBar onSearch={handleDashboardSearch} search="" location="" category="Jobs" />
       </section>
 
       {/* Job Tabs Section */}
