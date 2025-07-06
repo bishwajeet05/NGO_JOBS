@@ -26,23 +26,23 @@ export async function POST(request: Request) {
     // if (token) { ... }
     const query = `
       INSERT INTO jobs (
-        title, slug, description, qualifications, role_category, role_type, employment_type, experience_min, experience_max, education_required, salary_currency,
-        salary_value, salary_unit_text, date_posted, valid_through, organization, organization_type, country, state,
-        city, pin_code, street_address, is_active, how_to_apply, applylink, user_id, featured
+        title, slug, description, how_to_apply, applylink, qualifications, role_category,
+        employment_type, experience_min, education_required, salary_currency, salary_value, salary_unit_text,
+        date_posted, valid_through, organization, organization_type, country, state, city, pin_code, street_address, is_active, featured
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24
       ) RETURNING *
     `;
     const values = [
       data.title,
       data.slug,
       data.description,
+      data.how_to_apply,
+      data.applylink,
       data.qualifications,
       data.role_category,
-      data.role_type,
       data.employment_type,
       data.experience_min,
-      data.experience_max,
       data.education_required,
       data.salary_currency,
       data.salary_value,
@@ -57,9 +57,6 @@ export async function POST(request: Request) {
       data.pin_code,
       data.street_address,
       data.is_active ?? true,
-      data.how_to_apply,
-      data.applylink,
-      data.user_id || 'superadmin',
       data.featured ?? false,
     ];
     const result = await pool.query(query, values);
@@ -77,12 +74,12 @@ export async function PUT(request: Request) {
       UPDATE jobs SET
         title = $2, slug = $3, description = $4, qualifications = $5,
         requirements = $6, career_prospects = $7,
-        role_category = $8, role_type = $9, employment_type = $10,
-        experience_min = $11, experience_max = $12, education_required = $13,
-        industry_type = $14, department = $15, key_skills = $16,
-        salary_currency = $17, salary_value = $18, salary_unit_text = $19,
-        date_posted = $20, valid_through = $21, country = $22, state = $23, city = $24, pin_code = $25, street_address = $26, user_id = $27, is_remote = $28,
-        is_active = $29, organization = $30, organization_type = $31, applylink = $32, how_to_apply = $33, featured = $34
+        role_category = $8, employment_type = $9,
+        experience_min = $10, education_required = $11,
+        industry_type = $12, department = $13, key_skills = $14,
+        salary_currency = $15, salary_value = $16, salary_unit_text = $17,
+        date_posted = $18, valid_through = $19, country = $20, state = $21, city = $22, pin_code = $23, street_address = $24, user_id = $25, is_remote = $26,
+        is_active = $27, organization = $28, organization_type = $29, applylink = $30, how_to_apply = $31, featured = $32
       WHERE id = $1 RETURNING *
     `;
     const values = [
@@ -94,10 +91,8 @@ export async function PUT(request: Request) {
       data.requirements,
       data.career_prospects,
       data.role_category,
-      data.role_type,
       data.employment_type,
       data.experience_min,
-      data.experience_max,
       data.education_required,
       data.industry_type,
       data.department,

@@ -19,10 +19,8 @@ type Job = {
   requirements: string;
   career_prospects: string;
   role_category: string;
-  role_type: string;
   employment_type: string;
   experience_min: number;
-  experience_max: number;
   education_required: string;
   industry_type: string;
   department: string;
@@ -177,7 +175,7 @@ export default function SuperAdminAddJobs() {
         setUser(userData);
         const jobsRes = await fetch('/api/jobs');
         const jobsData = await jobsRes.json();
-        setJobs(jobsData.filter((job: any) => job.user_id === userData.id));
+        setJobs(jobsData);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -557,14 +555,6 @@ export default function SuperAdminAddJobs() {
                     <option value="Other">Other</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-base font-semibold text-blue-900 mb-1">Role Type<span className="text-red-500">*</span></label>
-                  <input
-                    {...register("role_type", { required: true })}
-                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                    placeholder="e.g. Full-time, Part-time, Contractual"
-                  />
-                </div>
               </div>
             </div>
 
@@ -579,15 +569,6 @@ export default function SuperAdminAddJobs() {
                     className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
                     type="number"
                     min="0"
-                  />
-                </div>
-                <div>
-                  <label className="block text-base font-semibold text-blue-900 mb-1">Experience Max<span className="text-red-500">*</span></label>
-                  <input
-                    type="number"
-                    {...register("experience_max", { required: true })}
-                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                    placeholder="Maximum years of experience"
                   />
                 </div>
               </div>
