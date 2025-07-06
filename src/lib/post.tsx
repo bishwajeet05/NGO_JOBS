@@ -96,3 +96,9 @@ export async function getHomeJobPosts() {
   const { rows } = await pool.query('SELECT * FROM job');
   return rows;
 }
+
+// Fetch a single expired job post by slug
+export async function getExpiredJobPostBySlug(jid: string) {
+  const { rows } = await pool.query('SELECT * FROM expired_jobs WHERE slug = $1::text', [jid]);
+  return rows[0];
+}

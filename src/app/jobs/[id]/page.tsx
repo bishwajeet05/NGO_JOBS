@@ -1,4 +1,4 @@
-import { getJobPostBySlug, getJobPosts, getResultPosts, getAdmitPosts } from '@/lib/post';
+import { getJobPostBySlug, getExpiredJobPostBySlug, getJobPosts, getResultPosts, getAdmitPosts } from '@/lib/post';
 import type { Metadata } from "next";
 import Link from 'next/link';
 import { 
@@ -13,6 +13,7 @@ import {
   ClipboardDocumentListIcon 
 } from '@heroicons/react/24/outline';
 import { Clock } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
 interface JobDetail {
   id: string;
@@ -129,6 +130,11 @@ export default async function JobDetail({
     const sidejobs = await getJobs();
 
     if (!job) {
+      // Check expired jobs
+      const expiredJob = await getExpiredJobPostBySlug(jid);
+      if (expiredJob) {
+        notFound(); // Return 404 for expired jobs
+      }
       return (
         <div className="container mx-auto px-4 py-8">
           <div className="text-center text-gray-600">
@@ -208,6 +214,10 @@ export default async function JobDetail({
       "url": `https://example.com/jobs/${jid}`,
     };
 
+    // Fetch all jobs to determine serial number
+    const allJobs = await getJobs();
+    const serialNumber = allJobs.findIndex(j => j.id === job.id) + 1;
+
     return (
       <div className="container mx-auto px-4 py-8">
         <script type="application/ld+json">
@@ -225,7 +235,7 @@ export default async function JobDetail({
           {/* Main Content (2/3 width on desktop) */}
           <div className="md:col-span-2">
             {/* Header Section */}
-            <div className="bg-white p-4 sm:p-6 mb-6 flex flex-col gap-4">
+            <div className="bg-blue-50 p-4 sm:p-6 mb-6 flex flex-col gap-4 rounded-xl">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 {/* Left side: Title, Category, and Post Date */}
                 <div className="flex flex-col gap-2">
@@ -288,7 +298,7 @@ export default async function JobDetail({
                   <div className="flex items-center gap-2">
                     <ClockIcon className="h-5 w-5 text-gray-500" />
                     <span>
-                      <strong>Job ID :</strong> {job.job_id || "N/A"}
+                      <strong>Job ID :</strong> #{serialNumber || "N/A"}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -434,23 +444,37 @@ export default async function JobDetail({
             {/* Featured Jobs */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-6">
               <h2 className="text-base font-semibold text-gray-800 mb-4">Jobs you might be interested in</h2>
-              <div className="space-y-3">
-                {sidejobs.map(job => (
-                  <div key={job.title} className="border-b pb-4 last:border-0">
-                    <Link href={`/jobs/${job.slug}`}>
-                      <div className="flex justify-between items-start">
-                        <h3 className="text-sm font-medium text-black">{job.title}</h3>
-                        {true && (
-                          <span className="px-2 py-1 bg-yellow-200 text-yellow-900 text-xs rounded">
-                            New
-                          </span>
-                        )}
+              <div className="space-y-4">
+                {sidejobs.filter(j => j.id !== job.id).map(j => (
+                  <Link key={j.id} href={`/jobs/${j.slug}`} className="block group">
+                    <div className="flex flex-col border border-blue-100 rounded-xl p-4 bg-white hover:shadow-lg transition-all">
+                      <div className="flex items-center gap-3 mb-2">
+                        {/* Large round logo/initial */}
+                        <div className="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center text-2xl font-bold text-white">
+                          {j.organization?.[0] || 'J'}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold text-blue-900 group-hover:underline">{j.title}</h3>
+                          <div className="text-xs text-gray-500 mt-0.5">
+                            by <span className="font-semibold text-gray-700">{j.organization || 'Employer'}</span> in {j.role_category || 'Category'}
+                          </div>
+                        </div>
+                        {/* Icon buttons */}
+                        <div className="flex gap-2 items-center">
+                          {j.featured && <span title="Featured" className="text-blue-500"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z" fill="currentColor"/></svg></span>}
+                          <span title="Bookmark" className="text-gray-400"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
+                        </div>
                       </div>
-                      <div className="flex items-center w-full pt-3 md:pt-4">
-                        <div className="text-xs text-gray-700">Post Date : {new Date(job.postdate).toLocaleDateString()}</div>
+                      <div className="flex flex-wrap gap-2 items-center mb-2">
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">{j.employment_type}</span>
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">{[j.city, j.country].filter(Boolean).join(', ')}</span>
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">{j.salary_currency}{j.salary_value}{j.salary_unit_text ? ` /${j.salary_unit_text.toLowerCase()}` : ''}</span>
                       </div>
-                    </Link>
-                  </div>
+                      <div className="text-xs text-gray-500 font-medium mt-1">
+                        Deadline date: {j.valid_through ? new Date(j.valid_through).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}
+                      </div>
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>

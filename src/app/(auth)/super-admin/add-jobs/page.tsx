@@ -55,6 +55,11 @@ export default function SuperAdminAddJobs() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  const [orgExists, setOrgExists] = useState(false);
+  const [orgCheckLoading, setOrgCheckLoading] = useState(false);
+  const organizationValue = watch("organization");
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
   // Watch for changes in title, city, and state to generate slug
   const title = watch("title");
@@ -222,6 +227,19 @@ export default function SuperAdminAddJobs() {
     }
   }, [editingJob, setValue]);
 
+  // Check for existing organization when entering Organization / Company name
+  useEffect(() => {
+    if (!organizationValue) {
+      setOrgExists(false);
+      return;
+    }
+    setOrgCheckLoading(true);
+    // Check if organization already exists in jobs
+    const exists = jobs.some(job => job.organization?.trim().toLowerCase() === organizationValue.trim().toLowerCase());
+    setOrgExists(exists);
+    setOrgCheckLoading(false);
+  }, [organizationValue, jobs]);
+
   // Create or update job
   const onSubmit = async (data: Job) => {
     try {
@@ -307,18 +325,22 @@ export default function SuperAdminAddJobs() {
         <section className="bg-white/90 rounded-2xl border border-blue-100 shadow-lg shadow-blue-100/30 p-4 md:p-6 mb-6 w-full transition-all">
           <h2 className="text-lg font-extrabold mb-3 border-b border-blue-50 pb-2 text-blue-900 tracking-tight">{editingJob ? "Edit Job" : "Add Job"}</h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Basic Info */}
+            {/* 1. Candidate & Role Information */}
             <div className="mb-2">
-              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm">Basic Information</div>
+              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm flex items-center gap-2">
+                <span role="img" aria-label="Candidate">👤</span> Candidate & Role Information
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                {/* Job Title */}
                 <div>
-                  <label className="block text-base font-semibold text-blue-900 mb-1">Title<span className="text-red-500">*</span></label>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Job Title<span className="text-red-500">*</span></label>
                   <textarea
                     {...register("title", { required: true })}
                     className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base resize-none shadow-sm"
                     rows={1}
                   />
                 </div>
+                {/* Slug */}
                 <div>
                   <label className="block text-base font-semibold text-blue-900 mb-1">Slug<span className="text-red-500">*</span></label>
                   <textarea
@@ -327,180 +349,35 @@ export default function SuperAdminAddJobs() {
                     rows={1}
                   />
                 </div>
+                {/* Job URL */}
                 <div className="md:col-span-2">
-                  <label className="block text-base font-semibold text-blue-900 mb-1">URL <span className="text-red-500">*</span></label>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Job URL</label>
                   <textarea
-                    {...register("applylink", { required: true })}
+                    {...register("applylink", { required: false })}
                     className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base resize-none shadow-sm"
                     rows={1}
                   />
                 </div>
+                {/* How to Apply */}
                 <div className="md:col-span-2">
-                  <label className="block text-base font-semibold text-blue-900 mb-1">Description</label>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">How to Apply<span className="text-red-500">*</span></label>
                   <div className="mt-0.5">
+                    {/* Rich Text Editor Toolbar */}
                     <div className="flex flex-wrap gap-1 mb-1 bg-gradient-to-r from-blue-50/60 to-indigo-50/40 p-1.5 rounded border border-blue-100 shadow-sm">
-                      <button
-                        type="button"
-                        onClick={() => formatText('bold', undefined, 'description')}
-                        className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300"
-                        title="Bold"
-                      >
-                        <strong>B</strong>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => formatText('italic', undefined, 'description')}
-                        className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300"
-                        title="Italic"
-                      >
-                        <em>I</em>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => insertBulletList('description')}
-                        className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300"
-                        title="Bullet List"
-                      >
-                        •
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => insertNumberedList('description')}
-                        className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300"
-                        title="Numbered List"
-                      >
-                        1.
-                      </button>
-                      <select
-                        onChange={(e) => formatText('fontSize', e.target.value, 'description')}
-                        className="px-1.5 py-0.5 bg-white rounded"
-                        title="Font Size"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>Size</option>
-                        {[12, 14, 16, 18, 20, 24, 28, 32, 36, 40].map((size) => (
-                          <option key={size} value={size}>
-                            {size}
-                          </option>
-                        ))}
-                      </select>
-                      <select
-                        onChange={(e) => formatText('foreColor', e.target.value, 'description')}
-                        className="px-1.5 py-0.5 bg-white rounded"
-                        title="Text Color"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>Color</option>
-                        <option value="black">Black</option>
-                        <option value="red">Red</option>
-                        <option value="blue">Blue</option>
-                      </select>
-                      <button
-                        type="button"
-                        onClick={() => insertTable('description')}
-                        className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300"
-                        title="Insert Table"
-                      >
-                        Table
-                      </button>
+                      <button type="button" onClick={() => formatText('bold', undefined, 'how_to_apply')} className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300" title="Bold"><strong>B</strong></button>
+                      <button type="button" onClick={() => formatText('italic', undefined, 'how_to_apply')} className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300" title="Italic"><em>I</em></button>
+                      <button type="button" onClick={() => insertBulletList('how_to_apply')} className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300" title="Bullet List">•</button>
+                      <button type="button" onClick={() => insertNumberedList('how_to_apply')} className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300" title="Numbered List">1.</button>
+                      <select onChange={(e) => formatText('fontSize', e.target.value, 'how_to_apply')} className="px-1.5 py-0.5 bg-white rounded" title="Font Size" defaultValue=""><option value="" disabled>Size</option>{[12, 14, 16, 18, 20, 24, 28, 32, 36, 40].map((size) => (<option key={size} value={size}>{size}</option>))}</select>
+                      <select onChange={(e) => formatText('foreColor', e.target.value, 'how_to_apply')} className="px-1.5 py-0.5 bg-white rounded" title="Text Color" defaultValue=""><option value="" disabled>Color</option><option value="black">Black</option><option value="red">Red</option><option value="blue">Blue</option></select>
+                      <button type="button" onClick={() => insertTable('how_to_apply')} className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300" title="Insert Table">Table</button>
                     </div>
-                    <div
-                      ref={descriptionEditorRef}
-                      contentEditable
-                      onInput={() => updateFormValue('description')}
-                      className="min-h-[120px] p-2 border border-blue-100 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all shadow-sm text-base"
-                      style={{ whiteSpace: 'pre-wrap' }}
-                    />
+                    <div ref={howToApplyEditorRef} contentEditable onInput={() => updateFormValue('how_to_apply')} className="min-h-[80px] p-2 border border-blue-100 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all shadow-sm text-base" style={{ whiteSpace: 'pre-wrap' }} />
                   </div>
                 </div>
-                <div className="md:col-span-2">
-                  <label className="block text-base font-semibold text-blue-900 mb-1">How to Apply</label>
-                  <div className="mt-0.5">
-                    <div className="flex flex-wrap gap-1 mb-1 bg-gradient-to-r from-blue-50/60 to-indigo-50/40 p-1.5 rounded border border-blue-100 shadow-sm">
-                      <button
-                        type="button"
-                        onClick={() => formatText('bold', undefined, 'how_to_apply')}
-                        className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300"
-                        title="Bold"
-                      >
-                        <strong>B</strong>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => formatText('italic', undefined, 'how_to_apply')}
-                        className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300"
-                        title="Italic"
-                      >
-                        <em>I</em>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => insertBulletList('how_to_apply')}
-                        className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300"
-                        title="Bullet List"
-                      >
-                        •
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => insertNumberedList('how_to_apply')}
-                        className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300"
-                        title="Numbered List"
-                      >
-                        1.
-                      </button>
-                      <select
-                        onChange={(e) => formatText('fontSize', e.target.value, 'how_to_apply')}
-                        className="px-1.5 py-0.5 bg-white rounded"
-                        title="Font Size"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>Size</option>
-                        {[12, 14, 16, 18, 20, 24, 28, 32, 36, 40].map((size) => (
-                          <option key={size} value={size}>
-                            {size}
-                          </option>
-                        ))}
-                      </select>
-                      <select
-                        onChange={(e) => formatText('foreColor', e.target.value, 'how_to_apply')}
-                        className="px-1.5 py-0.5 bg-white rounded"
-                        title="Text Color"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>Color</option>
-                        <option value="black">Black</option>
-                        <option value="red">Red</option>
-                        <option value="blue">Blue</option>
-                      </select>
-                      <button
-                        type="button"
-                        onClick={() => insertTable('how_to_apply')}
-                        className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300"
-                        title="Insert Table"
-                      >
-                        Table
-                      </button>
-                    </div>
-                    <div
-                      ref={howToApplyEditorRef}
-                      contentEditable
-                      onInput={() => updateFormValue('how_to_apply')}
-                      className="min-h-[80px] p-2 border border-blue-100 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all shadow-sm text-base"
-                      style={{ whiteSpace: 'pre-wrap' }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Repeat for each section: Role Details, Experience, Salary, Dates, Organization, Location, Status, Qualifications, Education */}
-            <div className="mb-2">
-              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm">Role Details</div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                {/* Employment Type */}
                 <div>
-                  <label className="block text-base font-semibold text-blue-900 mb-1">
-                    Employment Type <span className="text-red-500">*</span>
-                  </label>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Employment Type<span className="text-red-500">*</span></label>
                   <select
                     {...register("employment_type", { required: true })}
                     className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
@@ -518,10 +395,9 @@ export default function SuperAdminAddJobs() {
                     <option value="Remote / Virtual Assignment">Remote</option>
                   </select>
                 </div>
+                {/* Category */}
                 <div>
-                  <label className="block text-base font-semibold text-blue-900 mb-1">
-                    Category <span className="text-red-500">*</span>
-                  </label>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Category<span className="text-red-500">*</span></label>
                   <select
                     {...register("role_category", { required: true })}
                     className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
@@ -555,15 +431,9 @@ export default function SuperAdminAddJobs() {
                     <option value="Other">Other</option>
                   </select>
                 </div>
-              </div>
-            </div>
-
-            {/* Experience */}
-            <div className="mb-2">
-              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm">Experience</div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                {/* Experience Required */}
                 <div>
-                  <label className="block text-base font-semibold text-blue-900 mb-1">Experience (Years)</label>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Experience Required (Years)</label>
                   <input
                     {...register("experience_min", { required: false, valueAsNumber: true })}
                     className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
@@ -571,62 +441,62 @@ export default function SuperAdminAddJobs() {
                     min="0"
                   />
                 </div>
-              </div>
-            </div>
-
-            {/* Salary */}
-            <div className="mb-2">
-              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm">Salary</div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                {/* Qualifications / Skills */}
                 <div>
-                  <label className="block text-base font-semibold text-blue-900 mb-1">
-                    Salary Currency <span className="text-red-500"></span>
-                  </label>
-                  <select
-                    {...register("salary_currency", { required: false })}
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Qualifications / Skills</label>
+                  <textarea
+                    {...register("qualifications", { required: false })}
                     className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                  >
-                    <option value="" disabled>Select Currency</option>
-                    <option value="INR">INR - Indian Rupee</option>
-                    <option value="USD">USD - US Dollar</option>
-                    <option value="EUR">EUR - Euro</option>
-                    <option value="GBP">GBP - British Pound</option>
-                    <option value="AUD">AUD - Australian Dollar</option>
-                    <option value="CAD">CAD - Canadian Dollar</option>
-                    <option value="JPY">JPY - Japanese Yen</option>
-                    <option value="CNY">CNY - Chinese Yuan</option>
-                    <option value="CHF">CHF - Swiss Franc</option>
-                    <option value="SGD">SGD - Singapore Dollar</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-base font-semibold text-blue-900 mb-1">Salary Value</label>
-                  <input
-                    {...register("salary_value", { required: false, valueAsNumber: true })}
-                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                    type="number"
-                    step="0.01"
-                    min="0"
+                    rows={1}
                   />
                 </div>
-                <div>
-                  <label className="block text-base font-semibold text-blue-900 mb-1">Salary Unit</label>
-                  <select
-                    {...register("salary_unit_text", { required: false })}
-                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                  >
-                    <option value="HOUR">Per Hour</option>
-                    <option value="MONTH">Per Month</option>
-                    <option value="YEAR">Per Year</option>
-                  </select>
+                {/* Salary Details */}
+                <div className="md:col-span-2">
+                  <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm">Salary Details</div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
+                    <div>
+                      <label className="block text-base font-semibold text-blue-900 mb-1">Currency</label>
+                      <select
+                        {...register("salary_currency", { required: false })}
+                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                      >
+                        <option value="INR">INR - Indian Rupee</option>
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="EUR">EUR - Euro</option>
+                        <option value="GBP">GBP - British Pound</option>
+                        <option value="AUD">AUD - Australian Dollar</option>
+                        <option value="CAD">CAD - Canadian Dollar</option>
+                        <option value="JPY">JPY - Japanese Yen</option>
+                        <option value="CNY">CNY - Chinese Yuan</option>
+                        <option value="CHF">CHF - Swiss Franc</option>
+                        <option value="SGD">SGD - Singapore Dollar</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-base font-semibold text-blue-900 mb-1">Amount</label>
+                      <input
+                        {...register("salary_value", { required: false, valueAsNumber: true })}
+                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-base font-semibold text-blue-900 mb-1">Unit</label>
+                      <select
+                        {...register("salary_unit_text", { required: false })}
+                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                        defaultValue="YEAR"
+                      >
+                        <option value="HOUR">Per Hour</option>
+                        <option value="MONTH">Per Month</option>
+                        <option value="YEAR">Per Year</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Dates */}
-            <div className="mb-2">
-              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm">Dates</div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                {/* Date Posted */}
                 <div>
                   <label className="block text-base font-semibold text-blue-900 mb-1">Date Posted<span className="text-red-500">*</span></label>
                   <input
@@ -635,116 +505,156 @@ export default function SuperAdminAddJobs() {
                     type="date"
                   />
                 </div>
+                {/* Valid Through */}
                 <div>
                   <label className="block text-base font-semibold text-blue-900 mb-1">Valid Through<span className="text-red-500">*</span></label>
                   <input
                     {...register("valid_through", { required: true })}
                     className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                    type="datetime-local"
+                    type="date"
                   />
+                </div>
+                {/* Job Description */}
+                <div className="md:col-span-2">
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Job Description</label>
+                  <div className="mt-0.5">
+                    {/* Rich Text Editor Toolbar */}
+                    <div className="flex flex-wrap gap-1 mb-1 bg-gradient-to-r from-blue-50/60 to-indigo-50/40 p-1.5 rounded border border-blue-100 shadow-sm">
+                      <button type="button" onClick={() => formatText('bold', undefined, 'description')} className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300" title="Bold"><strong>B</strong></button>
+                      <button type="button" onClick={() => formatText('italic', undefined, 'description')} className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300" title="Italic"><em>I</em></button>
+                      <button type="button" onClick={() => insertBulletList('description')} className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300" title="Bullet List">•</button>
+                      <button type="button" onClick={() => insertNumberedList('description')} className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300" title="Numbered List">1.</button>
+                      <select onChange={(e) => formatText('fontSize', e.target.value, 'description')} className="px-1.5 py-0.5 bg-white rounded" title="Font Size" defaultValue=""><option value="" disabled>Size</option>{[12, 14, 16, 18, 20, 24, 28, 32, 36, 40].map((size) => (<option key={size} value={size}>{size}</option>))}</select>
+                      <select onChange={(e) => formatText('foreColor', e.target.value, 'description')} className="px-1.5 py-0.5 bg-white rounded" title="Text Color" defaultValue=""><option value="" disabled>Color</option><option value="black">Black</option><option value="red">Red</option><option value="blue">Blue</option></select>
+                      <button type="button" onClick={() => insertTable('description')} className="px-1.5 py-0.5 bg-white rounded hover:bg-gray-300" title="Insert Table">Table</button>
+                    </div>
+                    <div ref={descriptionEditorRef} contentEditable onInput={() => updateFormValue('description')} className="min-h-[120px] p-2 border border-blue-100 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all shadow-sm text-base" style={{ whiteSpace: 'pre-wrap' }} />
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Organization */}
+            {/* 2. Organisation Details */}
             <div className="mb-2">
-              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm">Organization</div>
+              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm flex items-center gap-2">
+                <span role="img" aria-label="Organisation">🏢</span> Organisation Details
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                {/* Organisation / Company Name */}
                 <div>
-                  <label className="block text-base font-semibold text-blue-900 mb-1">Organization / Company name <span className="text-red-500">*</span></label>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Organisation / Company Name<span className="text-red-500">*</span></label>
                   <textarea
                     {...register("organization", { required: true })}
                     className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
                     rows={1}
                   />
+                  {organizationValue && (
+                    <div className="text-sm mt-1" style={{ color: orgExists ? '#e53e3e' : '#38a169' }}>
+                      {orgCheckLoading ? 'Checking organisation...' : orgExists ? 'Organisation already exists!' : 'Organisation name is unique.'}
+                    </div>
+                  )}
                 </div>
+                {/* Organisation Logo */}
                 <div>
-                  <label className="block text-base font-semibold text-blue-900 mb-1">Organisation Details</label>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Organisation Logo</label>
+                  <label htmlFor="org-logo-upload" className="flex flex-col items-center justify-center border-2 border-dashed border-blue-200 rounded-lg bg-white/80 p-2 cursor-pointer hover:border-blue-400 transition-all min-h-[56px] w-full">
+                    <svg className="w-7 h-7 text-blue-400 mb-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+                    <span className="text-blue-700 font-medium text-sm">Upload logo</span>
+                    <input
+                      id="org-logo-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={e => {
+                        const file = e.target.files?.[0] || null;
+                        setLogoFile(file);
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => setLogoPreview(reader.result as string);
+                          reader.readAsDataURL(file);
+                        } else {
+                          setLogoPreview(null);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                  {logoPreview && (
+                    <div className="mt-1 flex items-center gap-2">
+                      <img src={logoPreview} alt="Logo Preview" className="h-10 w-auto rounded border border-blue-200 shadow" />
+                      <span className="text-blue-700 text-xs">Preview</span>
+                    </div>
+                  )}
+                </div>
+                {/* Organisation Description */}
+                <div>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Organisation Description</label>
                   <textarea
                     {...register("organization_type", { required: true })}
+                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm min-w-[320px] md:min-w-[480px]"
+                    rows={2}
+                  />
+                </div>
+                {/* Country */}
+                <div>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Country<span className="text-red-500">*</span></label>
+                  <select
+                    {...register("country", { required: true })}
                     className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                    rows={1}
+                  >
+                    <option value="India">India</option>
+                    <option value="United States">United States</option>
+                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="Canada">Canada</option>
+                    <option value="Australia">Australia</option>
+                  </select>
+                </div>
+                {/* State */}
+                <div>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">State</label>
+                  <input
+                    {...register("state", { required: false })}
+                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                    placeholder="e.g., Maharashtra"
+                  />
+                </div>
+                {/* City */}
+                <div>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">City</label>
+                  <input
+                    {...register("city", { required: false })}
+                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                    placeholder="e.g., Pune"
+                  />
+                </div>
+                {/* PIN / Postal Code */}
+                <div>
+                  <label className="block text-base font-semibold text-blue-900 mb-1">PIN / Postal Code</label>
+                  <input
+                    {...register("pin_code", { required: false })}
+                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                    placeholder="e.g., 400001"
+                  />
+                </div>
+                {/* Street Address */}
+                <div className="md:col-span-2">
+                  <label className="block text-base font-semibold text-blue-900 mb-1">Street Address</label>
+                  <textarea
+                    {...register("street_address")}
+                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                    rows={2}
+                    placeholder="e.g., 123 Main Street"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Location */}
+            {/* 3. Job Visibility & Status */}
             <div className="mb-2">
-              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm">Location</div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                <div>
-                  <div className="flex gap-3 mb-2">
-                    <div className="flex-1">
-                      <label className="block text-base font-semibold text-blue-900 mb-1">
-                        Country <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        {...register("country", { required: true })}
-                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                      >
-                        <option value="" disabled>Select Country</option>
-                        <option value="India">India</option>
-                        <option value="United States">United States</option>
-                        <option value="United Kingdom">United Kingdom</option>
-                        <option value="Canada">Canada</option>
-                        <option value="Australia">Australia</option>
-                      </select>
-                    </div>
-                    <div className="flex-1">
-                      <label className="block text-base font-semibold text-blue-900 mb-1">
-                        State <span className="text-red-500"></span>
-                      </label>
-                      <input
-                        {...register("state", { required: false })}
-                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                        placeholder="e.g., Maharashtra"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3 mb-2">
-                    <div className="flex-1">
-                      <label className="block text-base font-semibold text-blue-900 mb-1">
-                        City <span className="text-red-500"></span>
-                      </label>
-                      <input
-                        {...register("city", { required: false })}
-                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                        placeholder="e.g., Pune"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <label className="block text-base font-semibold text-blue-900 mb-1">
-                        PIN/Postal Code <span className="text-red-500"></span>
-                      </label>
-                      <input
-                        {...register("pin_code", { required: false })}
-                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                        placeholder="e.g., 400001"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mb-2">
-                    <label className="block text-base font-semibold text-blue-900 mb-1">
-                      Street Address
-                    </label>
-                    <textarea
-                      {...register("street_address")}
-                      className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                      rows={2}
-                      placeholder="e.g., 123 Main Street"
-                    />
-                  </div>
-                </div>
+              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm flex items-center gap-2">
+                <span role="img" aria-label="Status">⚙</span> Job Visibility & Status
               </div>
-            </div>
-
-            {/* Status */}
-            <div className="mb-2">
-              <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm">Status</div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                {/* Status */}
                 <div>
                   <h3 className="text-base font-semibold mb-1"></h3>
                   <div className="flex items-center gap-1">
@@ -770,23 +680,6 @@ export default function SuperAdminAddJobs() {
                       Mark as Featured
                     </label>
                   </div>
-                </div>
-                <div className="flex-1">
-                  <label className="block text-base font-semibold text-blue-900 mb-1">Qualifications<span className="text-red-500">*</span></label>
-                  <textarea
-                    {...register("qualifications", { required: true })}
-                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                    rows={1}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-base font-semibold text-blue-900 mb-1">Education Required<span className="text-red-500">*</span></label>
-                  <input
-                    type="text"
-                    {...register("education_required", { required: true })}
-                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                    placeholder="e.g. Bachelors, Masters, etc."
-                  />
                 </div>
               </div>
             </div>
@@ -822,7 +715,7 @@ export default function SuperAdminAddJobs() {
               <thead className="sticky top-0 bg-gradient-to-r from-blue-50/80 to-indigo-50/60 z-10">
                 <tr className="text-blue-800 border-b border-blue-100">
                   <th className="px-4 py-3 text-left font-semibold">Title</th>
-                  <th className="px-4 py-3 text-left font-semibold">Employment Type</th>
+                  <th className="px-4 py-3 text-left font-semibold">Organisation</th>
                   <th className="px-4 py-3 text-left font-semibold">Category</th>
                   <th className="px-4 py-3 text-left font-semibold">Created & Expired</th>
                   <th className="px-4 py-3 text-left font-semibold">Actions</th>
@@ -831,7 +724,7 @@ export default function SuperAdminAddJobs() {
               <tbody>
                 {jobs.length === 0 ? (
                   <tr><td colSpan={5} className="text-center text-blue-300 py-6 text-base">No jobs available.</td></tr>
-                ) : jobs.map((job) => (
+                ) : jobs.slice(0, 5).map((job) => (
                   <tr key={job.id} className="bg-white hover:bg-blue-50/60 border-b border-blue-50 transition-all">
                     <td className="px-4 py-3 font-semibold align-top text-base">
                       <div className="flex items-center gap-2">
@@ -844,25 +737,26 @@ export default function SuperAdminAddJobs() {
                       </div>
                     </td>
                     <td className="px-4 py-3 align-top text-base">
-                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-base font-semibold shadow-sm">{job.employment_type}</span>
+                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-base font-semibold shadow-sm">{job.organization}</span>
                     </td>
                     <td className="px-4 py-3 align-top text-base">
                       <span className="bg-green-50 text-green-700 px-2 py-1 rounded text-base font-semibold shadow-sm">{job.role_category}</span>
                     </td>
                     <td className="px-4 py-3 align-top text-base">
-                      <div className="text-base text-blue-400">
-                        <span className="block">Created: {job.date_posted ? new Date(job.date_posted).toLocaleDateString() : '-'}</span>
-                        <span className="block">Expiry: {job.valid_through ? new Date(job.valid_through).toLocaleDateString() : '-'}</span>
-                      </div>
+                      <div className="text-blue-700 font-semibold">{job.date_posted ? new Date(job.date_posted).toLocaleDateString() : '-'}</div>
+                      <div className="text-blue-400 text-base">Expires: {job.valid_through ? new Date(job.valid_through).toLocaleDateString() : '-'}</div>
                     </td>
-                    <td className="px-4 py-3 flex gap-2 align-top text-base">
-                      <button onClick={(e) => { e.stopPropagation(); editJob(job); }} className="p-2 rounded-lg hover:bg-blue-100/60 transition-colors shadow-sm" title="Edit"><Edit size={16} className="text-blue-500" /></button>
-                      <button onClick={(e) => { e.stopPropagation(); deleteJob(job.id); }} className="p-2 rounded-lg hover:bg-red-50 transition-colors shadow-sm" title="Delete"><Trash2 size={16} className="text-red-400" /></button>
+                    <td className="px-4 py-3 align-top text-base">
+                      <button onClick={() => editJob(job)} className="text-blue-600 hover:underline mr-2">Edit</button>
+                      <button onClick={() => deleteJob(job.id)} className="text-red-600 hover:underline">Delete</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <div className="flex justify-end mt-2">
+              <a href="/super-admin/all-jobs" className="text-blue-600 font-bold hover:underline">View All</a>
+            </div>
           </div>
         </section>
       </main>

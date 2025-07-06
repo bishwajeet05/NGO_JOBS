@@ -6,7 +6,7 @@ import { verifyToken } from '@/lib/auth';
 
 export async function GET() {
   try {
-    const result = await pool.query("SELECT * FROM jobs ORDER BY created_at DESC");
+    const result = await pool.query("SELECT * FROM jobs WHERE valid_through >= NOW() ORDER BY created_at DESC");
     return NextResponse.json(result.rows);
   } catch (error) {
     console.error('Database error:', error);

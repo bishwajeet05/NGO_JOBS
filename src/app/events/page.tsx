@@ -1,74 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-const mockEvents = [
-  {
-    id: 1,
-    title: "Scientific Results Conference",
-    date: "2017-09-12",
-    time: "9:00 AM - 6:00 PM",
-    location: "410 Park Avenue",
-    image: "/images/pexels-zhuhehuai-716276.jpg",
-    description:
-      "Before cats conquered the internet, they conquered the world—with a little help from their human serfs. Domesticated cats live pretty much everywhere except Antarctica, and a new study in Nature Ecology and Evolution helps to uncover how they...",
-    link: "/events/1",
-    price: "Free",
-  },
-  {
-    id: 2,
-    title: "Boost Your Teamworking Skills",
-    date: "2017-09-15",
-    time: "9:00 AM - 4:00 PM",
-    location: "15 Eastern Road",
-    image: "/images/undraw_hiring_8szx.svg",
-    description:
-      "Around 1.2 million wildebeest travel through East Africa each year during their migration. The move—the largest overland migration on the planet—is necessary for their survival, helping them keep up with moving rainfall and find plentiful...",
-    link: "/events/2",
-    price: "$5",
-  },
-  {
-    id: 3,
-    title: "Campus Tour 2017",
-    date: "2017-09-19",
-    time: "9:00 AM - 3:00 PM",
-    location: "15 Hilton Street",
-    image: "/images/ngo_job_board_india.jpg",
-    description:
-      "There are coffee shops, sports, restaurants and a multitude of great study spots. Whether you are a prospective student or already taking classes, feel free to explore and see what makes 'the campus on the hill' so special...",
-    link: "/events/3",
-    price: "Free",
-  },
-  {
-    id: 4,
-    title: "The Geographies of a Care-based Economy",
-    date: "2017-10-22",
-    time: "10:00 AM - 2:00 PM",
-    location: "15 Hilton Street",
-    image: "/images/wa.jpg",
-    description:
-      "Our sun might have been born with a non-identical twin. Dubbed Nemesis, it would have orbited the same point as our own star before wandering off into the galaxy. Nemesis has never been found, but a new analysis...",
-    link: "/events/4",
-    price: "Free",
-  },
-];
-
-function formatDate(dateStr: string) {
-  const date = new Date(dateStr);
-  const day = date.getDate();
-  const month = date.toLocaleString("default", { month: "long" });
-  const year = date.getFullYear();
-  return { day, month, year };
-}
+import { formatDate } from "@/lib/utils";
 
 export default function EventsPage() {
   const [dateFilter, setDateFilter] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredEvents = mockEvents.filter((event) => {
-    const matchesDate = dateFilter ? event.date === dateFilter : true;
+  useEffect(() => {
+    fetch("/api/events")
+      .then(res => res.json())
+      .then(data => {
+        setEvents(data);
+        setLoading(false);
+      });
+  }, []);
+
+  const filteredEvents = events.filter((event: any) => {
+    const matchesDate = dateFilter ? event.start_date === dateFilter : true;
     const matchesKeyword = keyword
       ? event.title.toLowerCase().includes(keyword.toLowerCase()) ||
         event.description.toLowerCase().includes(keyword.toLowerCase())
@@ -106,8 +59,8 @@ export default function EventsPage() {
         </button>
       </form>
       <div className="space-y-8">
-        {filteredEvents.map((event) => {
-          const { day, month, year } = formatDate(event.date);
+        {filteredEvents.map((event: any) => {
+          const { day, month, year } = formatDate(event.start_date);
           return (
             <div
               key={event.id}
@@ -130,7 +83,6 @@ export default function EventsPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
                   <h2 className="text-xl font-bold text-[#1a2a3a] leading-tight mr-2">{event.title}</h2>
-                  <span className="ml-auto inline-block bg-blue-50 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full border border-blue-200">{event.price}</span>
                 </div>
                 <div className="text-gray-700 text-base font-medium mb-2 line-clamp-2">{event.description}</div>
                 <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-2">

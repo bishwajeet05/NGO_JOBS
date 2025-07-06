@@ -23,9 +23,25 @@ interface GrantForm {
 }
 
 const typeOptions = [
-  "Grant", "Fellowship", "Scholarship", "Competition", "Other"
+  "Proposal", "Grant"
 ];
 const statusOptions = ["Draft", "Published", "Closed"];
+
+const sectorOptions = [
+  "Education",
+  "Health",
+  "Livelihoods / Skill Development",
+  "Gender Equality / Women Empowerment",
+  "Environment / Climate Change",
+  "Agriculture / Rural Development",
+  "Child Rights / Protection",
+  "Human Rights / Advocacy",
+  "Water, Sanitation & Hygiene (WASH)",
+  "Disability",
+  "Disaster Relief",
+  "Arts & Culture",
+  "Technology for Development"
+];
 
 export default function PostGrantPage() {
   const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<GrantForm>();
@@ -95,8 +111,11 @@ export default function PostGrantPage() {
             </div>
             <div>
               <label className="block text-base font-semibold text-blue-900 mb-1">Sector / Theme</label>
-              <input {...register("sector")}
-                placeholder="e.g. Health, Education" className="p-2 border border-blue-100 rounded-lg w-full bg-[#f8fafc] text-base shadow-sm" />
+              <select {...register("sector")}
+                className="p-2 border border-blue-100 rounded-lg w-full bg-[#f8fafc] text-base shadow-sm">
+                <option value="">Select</option>
+                {sectorOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+              </select>
             </div>
             <div>
               <label className="block text-base font-semibold text-blue-900 mb-1">Eligible Applicants</label>

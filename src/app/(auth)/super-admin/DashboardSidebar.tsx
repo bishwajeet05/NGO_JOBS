@@ -7,6 +7,7 @@ import {
 const sidebarItems = [
   { icon: BarChart2, label: 'Dashboard', href: '/super-admin' },
   { icon: Briefcase, label: 'Add Jobs', href: '/super-admin/add-jobs' },
+  { icon: FileText, label: 'All Jobs', href: '/super-admin/all-jobs' },
   { icon: FileText, label: 'Post Grant', href: '/super-admin/post-grant' },
   { icon: Calendar, label: 'Post Event', href: '/super-admin/Event' },
   { icon: FileText, label: 'Analytics', href: '/super-admin/analytics' },
