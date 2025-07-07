@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import Image from 'next/image';
 import { BarChart2, Briefcase, User, Settings as SettingsIcon, LogOut, Menu, Users as UsersIcon, FileText, Bell, CreditCard, LifeBuoy, LayoutGrid, Layers, Edit, Trash2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import DashboardSidebar from '../DashboardSidebar';
 
 type Job = {
@@ -45,7 +45,7 @@ type Job = {
   updated_at: string;
 };
 
-export default function SuperAdminAddJobs() {
+function SuperAdminAddJobsInner() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [viewingJob, setViewingJob] = useState<Job | null>(null);
@@ -60,6 +60,7 @@ export default function SuperAdminAddJobs() {
   const organizationValue = watch("organization");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const searchParams = useSearchParams();
 
   // Watch for changes in title, city, and state to generate slug
   const title = watch("title");
@@ -240,6 +241,15 @@ export default function SuperAdminAddJobs() {
     setOrgCheckLoading(false);
   }, [organizationValue, jobs]);
 
+  // Load job for editing if id is in query params
+  useEffect(() => {
+    const id = searchParams?.get('id');
+    if (id && jobs.length > 0) {
+      const job = jobs.find(j => j.id === id);
+      if (job) setEditingJob(job);
+    }
+  }, [searchParams, jobs]);
+
   // Create or update job
   const onSubmit = async (data: Job) => {
     try {
@@ -260,6 +270,12 @@ export default function SuperAdminAddJobs() {
       if (howToApplyEditorRef.current) howToApplyEditorRef.current.innerHTML = '';
       const updatedJobs = await fetch("/api/jobs").then((res) => res.json());
       setJobs(updatedJobs);
+      // Remove ?id= from URL after edit
+      if (window && window.history && searchParams?.get('id')) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('id');
+        window.history.replaceState({}, document.title, url.pathname);
+      }
     } catch (error: any) {
       alert(`Failed to save job: ${error.message}`);
     }
@@ -454,48 +470,48 @@ export default function SuperAdminAddJobs() {
                 <div className="md:col-span-2">
                   <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/60 px-3 py-1.5 rounded-lg border border-blue-100 text-base font-semibold text-blue-700 mb-2 shadow-sm">Salary Details</div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-3">
-                    <div>
+                <div>
                       <label className="block text-base font-semibold text-blue-900 mb-1">Currency</label>
-                      <select
-                        {...register("salary_currency", { required: false })}
-                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                      >
-                        <option value="INR">INR - Indian Rupee</option>
-                        <option value="USD">USD - US Dollar</option>
-                        <option value="EUR">EUR - Euro</option>
-                        <option value="GBP">GBP - British Pound</option>
-                        <option value="AUD">AUD - Australian Dollar</option>
-                        <option value="CAD">CAD - Canadian Dollar</option>
-                        <option value="JPY">JPY - Japanese Yen</option>
-                        <option value="CNY">CNY - Chinese Yuan</option>
-                        <option value="CHF">CHF - Swiss Franc</option>
-                        <option value="SGD">SGD - Singapore Dollar</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-base font-semibold text-blue-900 mb-1">Amount</label>
-                      <input
-                        {...register("salary_value", { required: false, valueAsNumber: true })}
-                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-base font-semibold text-blue-900 mb-1">Unit</label>
-                      <select
-                        {...register("salary_unit_text", { required: false })}
-                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                        defaultValue="YEAR"
-                      >
-                        <option value="HOUR">Per Hour</option>
-                        <option value="MONTH">Per Month</option>
-                        <option value="YEAR">Per Year</option>
-                      </select>
-                    </div>
-                  </div>
+                  <select
+                    {...register("salary_currency", { required: false })}
+                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                  >
+                    <option value="INR">INR - Indian Rupee</option>
+                    <option value="USD">USD - US Dollar</option>
+                    <option value="EUR">EUR - Euro</option>
+                    <option value="GBP">GBP - British Pound</option>
+                    <option value="AUD">AUD - Australian Dollar</option>
+                    <option value="CAD">CAD - Canadian Dollar</option>
+                    <option value="JPY">JPY - Japanese Yen</option>
+                    <option value="CNY">CNY - Chinese Yuan</option>
+                    <option value="CHF">CHF - Swiss Franc</option>
+                    <option value="SGD">SGD - Singapore Dollar</option>
+                  </select>
                 </div>
+                <div>
+                      <label className="block text-base font-semibold text-blue-900 mb-1">Amount</label>
+                  <input
+                    {...register("salary_value", { required: false, valueAsNumber: true })}
+                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                  />
+                </div>
+                <div>
+                      <label className="block text-base font-semibold text-blue-900 mb-1">Unit</label>
+                  <select
+                    {...register("salary_unit_text", { required: false })}
+                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                        defaultValue="YEAR"
+                  >
+                    <option value="HOUR">Per Hour</option>
+                    <option value="MONTH">Per Month</option>
+                    <option value="YEAR">Per Year</option>
+                  </select>
+                </div>
+              </div>
+            </div>
                 {/* Date Posted */}
                 <div>
                   <label className="block text-base font-semibold text-blue-900 mb-1">Date Posted<span className="text-red-500">*</span></label>
@@ -551,7 +567,7 @@ export default function SuperAdminAddJobs() {
                   {organizationValue && (
                     <div className="text-sm mt-1" style={{ color: orgExists ? '#e53e3e' : '#38a169' }}>
                       {orgCheckLoading ? 'Checking organisation...' : orgExists ? 'Organisation already exists!' : 'Organisation name is unique.'}
-                    </div>
+                </div>
                   )}
                 </div>
                 {/* Organisation Logo */}
@@ -597,53 +613,53 @@ export default function SuperAdminAddJobs() {
                 {/* Country */}
                 <div>
                   <label className="block text-base font-semibold text-blue-900 mb-1">Country<span className="text-red-500">*</span></label>
-                  <select
-                    {...register("country", { required: true })}
-                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                  >
-                    <option value="India">India</option>
-                    <option value="United States">United States</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Australia">Australia</option>
-                  </select>
-                </div>
+                      <select
+                        {...register("country", { required: true })}
+                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                      >
+                        <option value="India">India</option>
+                        <option value="United States">United States</option>
+                        <option value="United Kingdom">United Kingdom</option>
+                        <option value="Canada">Canada</option>
+                        <option value="Australia">Australia</option>
+                      </select>
+                    </div>
                 {/* State */}
                 <div>
                   <label className="block text-base font-semibold text-blue-900 mb-1">State</label>
-                  <input
-                    {...register("state", { required: false })}
-                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                    placeholder="e.g., Maharashtra"
-                  />
-                </div>
+                      <input
+                        {...register("state", { required: false })}
+                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                        placeholder="e.g., Maharashtra"
+                      />
+                    </div>
                 {/* City */}
                 <div>
                   <label className="block text-base font-semibold text-blue-900 mb-1">City</label>
-                  <input
-                    {...register("city", { required: false })}
-                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                    placeholder="e.g., Pune"
-                  />
-                </div>
+                      <input
+                        {...register("city", { required: false })}
+                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                        placeholder="e.g., Pune"
+                      />
+                    </div>
                 {/* PIN / Postal Code */}
                 <div>
                   <label className="block text-base font-semibold text-blue-900 mb-1">PIN / Postal Code</label>
-                  <input
-                    {...register("pin_code", { required: false })}
-                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                    placeholder="e.g., 400001"
-                  />
-                </div>
+                      <input
+                        {...register("pin_code", { required: false })}
+                        className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                        placeholder="e.g., 400001"
+                      />
+                    </div>
                 {/* Street Address */}
                 <div className="md:col-span-2">
                   <label className="block text-base font-semibold text-blue-900 mb-1">Street Address</label>
-                  <textarea
-                    {...register("street_address")}
-                    className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
-                    rows={2}
-                    placeholder="e.g., 123 Main Street"
-                  />
+                    <textarea
+                      {...register("street_address")}
+                      className="mt-0.5 p-2 border border-blue-100 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 bg-[#f8fafc] text-base transition-all shadow-sm"
+                      rows={2}
+                      placeholder="e.g., 123 Main Street"
+                    />
                 </div>
               </div>
             </div>
@@ -790,5 +806,13 @@ export default function SuperAdminAddJobs() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SuperAdminAddJobs() {
+  return (
+    <Suspense>
+      <SuperAdminAddJobsInner />
+    </Suspense>
   );
 } 

@@ -7,6 +7,7 @@ import StateCarousel from './components/StateCarousel';
 import { FaSearch, FaMapMarkerAlt, FaCalendarAlt } from 'react-icons/fa';
 import SearchBar from './components/SearchBar';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState, useMemo } from 'react';
 
 const eventCards = [
   {
@@ -113,6 +114,15 @@ const fundingCards = [
   },
 ];
 
+type EmployerCard = {
+  id: number;
+  name: string;
+  logo: string;
+  location: string;
+  tags: string; // comma separated
+  open_positions: number;
+};
+
 export default function Home() {
   const router = useRouter();
 
@@ -127,7 +137,7 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full bg-[#eaf4fb] min-h-screen flex flex-col">
+    <div className="w-full bg-[#F9FAFB] min-h-screen flex flex-col">
       <Head>
         <title>GreenImpact NGO</title>
       </Head>
@@ -142,7 +152,9 @@ export default function Home() {
             Explore jobs, fellowships, internships, scholarships, events, and grants from over 1,000 NGOs.
           </p>
         </div>
-        <SearchBar onSearch={handleDashboardSearch} search="" location="" category="Jobs" />
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SearchBar onSearch={handleDashboardSearch} search="" location="" category="Jobs" />
+        </div>
       </section>
 
       {/* Job Tabs Section */}
@@ -180,136 +192,14 @@ export default function Home() {
               Connect with leading NGOs and find your next opportunity in the development sector
             </p>
           </div>
-          <a href="#" className="text-[#2B7FFF] font-semibold flex items-center gap-2 hover:underline text-sm sm:text-base whitespace-nowrap">
+          <Link href="/top-organisations" className="text-[#2B7FFF] font-semibold flex items-center gap-2 hover:underline text-sm sm:text-base whitespace-nowrap">
             View All 
             <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 5L16 12L9 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </a>
+          </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {[
-            {
-              logo: '/images/leadtech.png',
-              name: 'LeadTech',
-              location: 'Bangalore, India',
-              tags: [{ name: 'Consulting', count: '7 Open Positions' }]
-            },
-            {
-              logo: '/images/wotr.png',
-              name: 'Watershed Organisation Trust (WOTR)',
-              location: 'Maharashtra, India',
-              tags: [{ name: 'Environment', count: '2 Open Positions' }]
-            },
-            {
-              logo: '/images/rocket.png',
-              name: 'Rocket Learning',
-              location: 'Delhi, India',
-              tags: [{ name: 'Education', count: '1 Open Position' }]
-            },
-            {
-              logo: '/images/learning-link.png',
-              name: 'Learning Link Foundation',
-              location: 'Delhi, India',
-              tags: [{ name: 'Education', count: '1 Open Position' }]
-            },
-            {
-              logo: '/images/akshar.png',
-              name: 'Akshar Foundation',
-              location: 'Assam, India',
-              tags: [{ name: 'Development', count: '1 Open Position' }]
-            },
-            {
-              logo: '/images/icct.png',
-              name: 'International Council on Clean Transportation',
-              location: 'District of Columbia, United States',
-              tags: [{ name: 'Environment', count: '1 Open Position' }]
-            },
-            {
-              logo: '/images/sinchana.png',
-              name: 'Sinchana Foundation',
-              location: 'Karnataka, India',
-              tags: [{ name: 'Education', count: '1 Open Position' }]
-            },
-            {
-              logo: '/images/change-engine.png',
-              name: 'Change Engine',
-              location: 'Delhi, India',
-              tags: [{ name: 'Consulting', count: '1 Open Position' }]
-            },
-            {
-              logo: '/images/impulsebyte.png',
-              name: 'Impulsebyte',
-              location: 'Rajasthan, India',
-              tags: [{ name: 'Tech for Good', count: '0 Open Positions' }]
-            },
-            {
-              logo: '/images/ground-zero.png',
-              name: 'Ground Zero',
-              location: 'Delhi, India',
-              tags: [{ name: 'Development', count: '0 Open Positions' }]
-            },
-            {
-              logo: '/images/peepul.png',
-              name: 'Peepul',
-              location: 'Delhi, India',
-              tags: [{ name: 'Education', count: '0 Open Positions' }]
-            },
-            {
-              logo: '/images/anudip.png',
-              name: 'Anudip Foundation',
-              location: 'West Bengal, India',
-              tags: [{ name: 'Livelihood', count: '0 Open Positions' }]
-            }
-          ].map((org, idx) => (
-            <div key={idx} className="bg-white rounded-xl shadow p-4 sm:p-5 hover:shadow-md transition-shadow flex flex-col h-[220px]">
-              {/* Logo Section - Fixed Height */}
-              <div className="h-12 mb-4">
-                <Image
-                  src="/images/APF-Logo-col-w_o-box-FINAL.png"
-                  alt={`${org.name} logo`}
-                  width={48}
-                  height={48}
-                  className="object-contain"
-                  priority={idx < 4}
-                />
-              </div>
-
-              {/* Content Section */}
-              <div className="flex flex-col flex-1 min-h-0">
-                {/* Organization Name - Fixed Height */}
-                <h3 className="font-semibold text-sm sm:text-[15px] text-[#1a2a3a] mb-2 line-clamp-2 h-10">
-                  {org.name}
-                </h3>
-
-                {/* Location - Fixed Height */}
-                {org.location && (
-                  <div className="flex items-center gap-1.5 text-gray-500 text-xs sm:text-sm mb-3 h-5">
-                    <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 13.5C13.6569 13.5 15 12.1569 15 10.5C15 8.84315 13.6569 7.5 12 7.5C10.3431 7.5 9 8.84315 9 10.5C9 12.1569 10.3431 13.5 12 13.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <path d="M12 22C14 18 20 15.4183 20 10C20 5.58172 16.4183 2 12 2C7.58172 2 4 5.58172 4 10C4 15.4183 10 18 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    <span className="line-clamp-1">{org.location}</span>
-                  </div>
-                )}
-
-                {/* Tags Section - At Bottom */}
-                <div className="mt-auto flex items-center gap-2">
-                  <div className="flex items-center gap-2 w-full">
-                    <span className="bg-gray-50 text-gray-600 px-3 py-1.5 rounded-full text-xs font-medium">
-                      {org.tags[0].name}
-                    </span>
-                    <span className={`bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full text-xs font-medium ml-auto ${
-                      org.tags[0].count.startsWith('0') ? 'opacity-75' : ''
-                    }`}>
-                      {org.tags[0].count}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <TopOrganisationsLiveCards />
       </section>
 
       {/* Upcoming Events */}
@@ -333,66 +223,7 @@ export default function Home() {
             </svg>
           </a>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          {eventCards.map((event, idx) => (
-            <div key={idx} className="bg-white rounded-xl shadow overflow-hidden flex flex-col">
-              <div className="relative">
-                <div className="w-full h-[200px] sm:h-[220px]">
-                <Image
-                    src="/images/pexels-zhuhehuai-716276.jpg"
-                  alt={event.title}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  className="w-full h-full object-cover"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  priority={idx === 0}
-                />
-                </div>
-                <div className="absolute top-0 left-0 w-full p-3 sm:p-4">
-                  <div className="flex flex-wrap gap-2">
-                      {event.tags.map(tag => (
-                      <span key={tag} className="bg-blue-500 text-white px-2.5 py-1 rounded-md text-xs font-medium shadow-sm">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent"></div>
-              </div>
-
-              <div className="flex flex-col flex-1 p-4 sm:p-6">
-                <div className="mb-auto">
-                  <h3 className="font-semibold text-base sm:text-lg text-[#1a2a3a] mb-2">
-                    {event.title}
-                  </h3>
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-4">
-                    {event.desc}
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex flex-wrap gap-3 items-center text-xs sm:text-sm text-gray-600">
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-blue-500">{event.dateIcon}</span>
-                      <span>{event.date}</span>
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-blue-500">{event.timeIcon}</span>
-                      <span>{event.time}</span>
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-pink-500">{event.locationIcon}</span>
-                      <span>{event.location}</span>
-                    </span>
-                  </div>
-                  <button className="w-full bg-[#2B7FFF] text-white px-4 py-2.5 rounded-lg font-semibold text-sm hover:bg-[#2B7FFF]/90 transition-colors">
-                    {event.button}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <UpcomingEventsLiveCards />
       </section>
 
       {/* Funding Opportunities */}
@@ -430,7 +261,7 @@ export default function Home() {
               <div className="text-base text-gray-700 font-normal leading-relaxed mb-4">{fund.desc}</div>
               <div className="text-xs text-gray-600 mb-6">Deadline: {fund.deadline}</div>
               <div className="flex-1 flex items-end">
-                <button className="bg-[#2B7FFF] text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-[#2B7FFF]/90 transition-colors w-full">{fund.button}</button>
+                <button className="bg-[#2B7FFF] text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-[#1A5FCC] transition-colors w-full">{fund.button}</button>
               </div>
             </div>
           ))}
@@ -564,11 +395,129 @@ export default function Home() {
               <span className="text-base text-[#1a2a3a] font-medium">Join Development Wala on WhatsApp</span>
             </div>
             <a href="https://whatsapp.com/channel/0029VaCxEqA0G0XoVCQyUx38" target="_blank" rel="noopener noreferrer" className="mt-4">
-              <button className="bg-[#25D366] text-white px-8 py-2 rounded-full font-bold tracking-widest text-sm w-full shadow hover:bg-[#1DA851] transition-colors">JOIN NOW</button>
+              <button className="bg-[#2B7FFF] text-white px-8 py-2 rounded-full font-bold tracking-widest text-sm w-full shadow hover:bg-[#1A5FCC] transition-colors">JOIN NOW</button>
             </a>
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+// Live Top Organisations Cards Component
+function TopOrganisationsLiveCards() {
+  const [orgs, setOrgs] = useState<EmployerCard[]>([]);
+  useEffect(() => {
+    fetch('/api/employers')
+      .then(res => res.json())
+      .then(data => setOrgs(data));
+  }, []);
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      {orgs.slice(0, 4).map(org => (
+        <Link key={org.id} href={`/top-organisations/${org.id}`} className="bg-white rounded-lg shadow p-4 flex flex-col items-start hover:shadow-lg transition cursor-pointer">
+          <img src={org.logo || '/images/APF-Logo-col-w_o-box-FINAL.png'} alt={org.name || 'Organisation Logo'} className="w-14 h-10 object-contain mb-2" />
+          <h3 className="text-base font-semibold mb-1">{org.name || 'Organisation'}</h3>
+          <div className="flex items-center text-xs text-gray-500 mb-2">
+            <span className="mr-2"><svg className="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>{org.location || 'India'}</span>
+          </div>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {org.tags && org.tags.split(',').map((tag, i) => (
+              <span key={i} className="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">{tag.trim()}</span>
+            ))}
+            <span className="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full font-semibold">{org.open_positions} Open Position{org.open_positions !== 1 ? 's' : ''}</span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+function truncateWords(text: string, wordLimit: number): string {
+  if (!text) return '';
+  const words = text.split(/\s+/);
+  if (words.length <= wordLimit) return text;
+  return words.slice(0, wordLimit).join(' ') + '...';
+}
+
+function UpcomingEventsLiveCards() {
+  const [events, setEvents] = useState<any[]>([]);
+  useEffect(() => {
+    fetch('/api/events')
+      .then(res => res.json())
+      .then(data => setEvents(data));
+  }, []);
+  // Helper to format date
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+      {events.slice(0, 3).map((event, idx) => (
+        <div key={event.id || idx} className="bg-white rounded-xl shadow overflow-hidden flex flex-col">
+          <div className="relative">
+            <div className="w-full h-[200px] sm:h-[220px]">
+              <Image
+                src={event.poster_url || '/images/pexels-zhuhehuai-716276.jpg'}
+                alt={event.title}
+                fill
+                style={{ objectFit: 'cover' }}
+                className="w-full h-full object-cover"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                priority={idx === 0}
+              />
+            </div>
+            <div className="absolute top-0 left-0 w-full p-3 sm:p-4">
+              <div className="flex flex-wrap gap-2">
+                {event.tags && event.tags.split(',').map((tag: string) => (
+                  <span key={tag} className="bg-blue-500 text-white px-2.5 py-1 rounded-md text-xs font-medium shadow-sm">
+                    {tag.trim()}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent"></div>
+          </div>
+          <div className="flex flex-col flex-1 p-4 sm:p-6">
+            <div className="mb-auto">
+              <h3 className="font-semibold text-base sm:text-lg text-[#1a2a3a] mb-2">
+                {event.title}
+              </h3>
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-4">
+                {truncateWords(event.description, 45)}
+              </p>
+            </div>
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-3 items-center text-xs sm:text-sm text-gray-600">
+                <span className="flex items-center gap-1.5">
+                  <span className="text-blue-500">🗓️</span>
+                  <span>{formatDate(event.start_date)}</span>
+                  {event.start_time && (
+                    <>
+                      <span className="text-gray-400 mx-1">|</span>
+                      <span className="text-blue-500">⏰</span>
+                      <span>{event.start_time}{event.end_time ? ` - ${event.end_time}` : ''}</span>
+                    </>
+                  )}
+                </span>
+                {event.location && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="text-pink-500">📍</span>
+                    <span>{event.location}</span>
+                  </span>
+                )}
+              </div>
+              <a href={event.link || '#'} target="_blank" rel="noopener noreferrer">
+                <button className="w-full bg-[#2B7FFF] text-white px-4 py-2.5 rounded-lg font-semibold text-sm hover:bg-[#1A5FCC] transition-colors">
+                  View Details
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

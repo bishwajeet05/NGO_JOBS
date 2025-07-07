@@ -1,5 +1,5 @@
 'use client';
-import { mockEvents, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -35,25 +35,30 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
     notFound();
     return null;
   }
-  const { day, month, year } = formatDate(event.date);
-  // Parse and convert times for AddToCalendarButton
-  const [startTimeRaw, endTimeRaw] = event.time.split(' - ');
-  const startTime = to24Hour(startTimeRaw);
-  const endTime = to24Hour(endTimeRaw);
+  const { day, month, year } = formatDate(event.start_date);
+  // Use start_time and end_time fields
+  let startTime = event.start_time || '';
+  let endTime = event.end_time || '';
+  // Optionally convert to 24-hour format if needed for AddToCalendarButton
+  // If you want to convert, uncomment below:
+  // if (startTime) startTime = to24Hour(startTime);
+  // if (endTime) endTime = to24Hour(endTime);
   return (
     <main className="max-w-4xl mx-auto px-4 py-10 min-h-screen">
       <div className="w-full max-w-4xl h-96 relative rounded-xl overflow-hidden mb-10">
-        <Image src={event.image} alt={event.title} fill className="object-cover rounded-xl" sizes="(max-width: 1024px) 100vw, 768px" />
+        <Image src={event.poster_url || '/images/pexels-zhuhehuai-716276.jpg'} alt={event.title} fill className="object-cover rounded-xl" sizes="(max-width: 1024px) 100vw, 768px" />
       </div>
       <div className="flex flex-col md:flex-row w-full max-w-4xl gap-10">
         {/* Date and meta info */}
         <div className="flex flex-col items-center md:items-start min-w-[180px] md:w-1/4 mb-6 md:mb-0">
           <div className="text-green-500 text-5xl font-extrabold leading-none mb-2">{day}</div>
           <div className="text-gray-500 text-base mb-1">{month}, {year}</div>
-          <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
-            <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-            {event.time}
-          </div>
+          {(startTime || endTime) && (
+            <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
+              <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              {startTime}{endTime ? ` - ${endTime}` : ''}
+            </div>
+          )}
           <div className="flex items-center gap-2 text-gray-500 text-sm">
             <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 12.414a2 2 0 10-2.828 2.828l4.243 4.243a8 8 0 111.414-1.414z" /></svg>
             {event.location}
@@ -75,8 +80,8 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
               name={event.title}
               options={['Apple','Google']}
               location={event.location}
-              startDate={event.date}
-              endDate={event.date}
+              startDate={event.start_date}
+              endDate={event.end_date || event.start_date}
               startTime={startTime}
               endTime={endTime}
               timeZone="Asia/Kolkata"

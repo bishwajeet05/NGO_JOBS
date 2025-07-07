@@ -473,8 +473,8 @@ export default async function JobDetail({
                       <div className="text-xs text-gray-500 font-medium mt-1">
                         Deadline date: {j.valid_through ? new Date(j.valid_through).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}
                       </div>
-                    </div>
-                  </Link>
+                      </div>
+                    </Link>
                 ))}
               </div>
             </div>

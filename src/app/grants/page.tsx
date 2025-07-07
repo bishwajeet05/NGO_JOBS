@@ -84,7 +84,7 @@ export default function GrantsPage() {
                   <span className="flex items-center gap-1"><svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg> {grant.sector}</span>
                   <span className="flex items-center gap-1"><svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 01-8 0" /><circle cx="12" cy="7" r="4" /><path d="M5.5 21h13a2.5 2.5 0 002.5-2.5V7A2.5 2.5 0 0018.5 4.5h-13A2.5 2.5 0 003 7v11.5A2.5 2.5 0 005.5 21z" /></svg> {grant.organization}</span>
                 </div>
-                <Link href={grant.link} className="text-blue-600 font-semibold hover:underline text-sm">View Details &rarr;</Link>
+                <Link href={`/grants/${grant.id}`} className="text-blue-600 font-semibold hover:underline text-sm">View Details &rarr;</Link>
               </div>
             </div>
           );

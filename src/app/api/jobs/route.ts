@@ -1,12 +1,20 @@
 // app/api/Job/route.ts
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import pool from "@/lib/db";
 import { verifyToken } from '@/lib/auth';
 // import { cookies } from 'next/headers';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const result = await pool.query("SELECT * FROM jobs WHERE valid_through >= NOW() ORDER BY created_at DESC");
+    const url = new URL(request.url);
+    const featuredParam = url.searchParams.get('featured');
+    let query = "SELECT * FROM jobs WHERE valid_through >= NOW()";
+    let values: any[] = [];
+    if (featuredParam === 'true') {
+      query += " AND featured = true";
+    }
+    query += " ORDER BY created_at DESC";
+    const result = await pool.query(query, values);
     return NextResponse.json(result.rows);
   } catch (error) {
     console.error('Database error:', error);

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { use, useEffect, useState } from 'react';
 import { notFound } from "next/navigation";
+import AddToCalendarButton from "@/app/components/AddToCalendarClient";
 
 function formatDate(dateStr: string) {
   const date = new Date(dateStr);
@@ -31,28 +32,57 @@ export default function GrantDetailPage({ params }: { params: Promise<{ id: stri
     notFound();
     return null;
   }
-  const { day, month, year } = formatDate(grant.date);
+  let day = '', month = '', year = '';
+  if (grant.date) {
+    const d = formatDate(grant.date);
+    day = d.day?.toString() || '';
+    month = d.month?.toString() || '';
+    year = d.year?.toString() || '';
+  }
   return (
     <main className="max-w-3xl mx-auto px-4 py-10 min-h-screen">
       <div className="flex flex-col md:flex-row w-full max-w-3xl gap-10">
-        {/* Date and meta info */}
+        {/* Date and logo */}
         <div className="flex flex-col items-center md:items-start min-w-[180px] md:w-1/4 mb-6 md:mb-0">
-          <div className="text-green-500 text-5xl font-extrabold leading-none mb-2">{day}</div>
-          <div className="text-gray-500 text-base mb-1">{month}, {year}</div>
-          <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
-            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 10c-4.418 0-8-1.79-8-4V7a2 2 0 012-2h12a2 2 0 012 2v7c0 2.21-3.582 4-8 4z" /></svg>
-            {grant.amount}
-          </div>
-          <div className="flex items-center gap-2 text-gray-500 text-sm">
-            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 01-8 0" /><circle cx="12" cy="7" r="4" /><path d="M5.5 21h13a2.5 2.5 0 002.5-2.5V7A2.5 2.5 0 0018.5 4.5h-13A2.5 2.5 0 003 7v11.5A2.5 2.5 0 005.5 21z" /></svg>
-            {grant.organization}
+          {day && <div className="text-green-500 text-5xl font-extrabold leading-none mb-2">{day}</div>}
+          {month && year && <div className="text-gray-500 text-base mb-1">{month}, {year}</div>}
+          {/* Logo placeholder */}
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-2 border border-gray-200">
+            <img src={grant.logo || '/images/ngo_job_board_india.jpg'} alt="Logo" className="w-10 h-10 object-contain" />
           </div>
         </div>
         {/* Title and description */}
         <div className="flex-1">
-          <h1 className="text-3xl font-bold text-[#1a2a3a] mb-4 leading-tight">{grant.title}</h1>
-          <span className="inline-block bg-blue-50 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full border border-blue-200 mb-4">{grant.type}</span>
-          <div className="prose prose-lg text-gray-800 mb-10 whitespace-pre-line" style={{lineHeight: '1.8'}}>{grant.description}</div>
+          <h1 className="text-3xl font-bold text-[#1a2a3a] mb-2 leading-tight">{grant.title || 'Grant'}</h1>
+          {/* Amount and organization below title */}
+          {(grant.amount || grant.organization) && (
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
+              {grant.amount && (
+                <span className="text-lg font-semibold text-green-700">{grant.amount}</span>
+              )}
+              {grant.organization && (
+                <span className="text-base text-gray-700 font-medium">{grant.organization}</span>
+              )}
+            </div>
+          )}
+          {grant.type && <span className="inline-block bg-blue-50 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full border border-blue-200 mb-4">{grant.type}</span>}
+          {grant.description && <div className="prose prose-lg text-gray-800 mb-10 whitespace-pre-line" style={{lineHeight: '1.8'}}>{grant.description}</div>}
+          {/* Add to Calendar Button */}
+          {grant.date && (
+            <div className="mt-6">
+              <AddToCalendarButton
+                name={grant.title || 'Grant Deadline'}
+                options={['Apple','Google']}
+                location={grant.organization || ''}
+                startDate={grant.date}
+                endDate={grant.date}
+                startTime={"09:00"}
+                endTime={"17:00"}
+                timeZone="Asia/Kolkata"
+                label="Add to Calendar"
+              />
+            </div>
+          )}
           <div className="flex items-center gap-2 mt-8">
             <span className="text-gray-500 font-semibold mr-2">Share:</span>
             <Link href="#" className="hover:opacity-80"><img src="/images/social-facebook.svg" alt="Facebook" className="w-7 h-7" /></Link>
