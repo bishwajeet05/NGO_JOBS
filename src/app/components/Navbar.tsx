@@ -72,7 +72,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center mr-4 select-none">
-          <span className="text-2xl font-extrabold tracking-tight text-blue-600 leading-none">Jobsy</span>
+          <img src="/images/NGO Hiring Org Logo 400x100.png" alt="NGO Hiring Org Logo" className="h-10 w-auto object-contain" style={{maxWidth: 200}} />
         </Link>
 
         {/* Mobile Menu Button */}
@@ -126,8 +126,8 @@ const Navbar = () => {
 
         {/* Desktop Actions */}
         <div className="hidden lg:flex items-center gap-2 ml-4">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base tracking-tight px-5 py-2 rounded-lg shadow-none border-none" asChild>
-            <Link href="/post-job">Post a Job/Event</Link>
+          <Button className="bg-[#2b7fff] hover:bg-[#176edc] text-white font-semibold text-base tracking-tight px-5 py-2 rounded-lg shadow-none border-none" asChild>
+            <Link href="/employer/add-jobs">Post a Job</Link>
           </Button>
           <Button variant="outline" className="flex items-center gap-2 px-5 py-2 rounded-lg font-semibold text-base tracking-tight border-gray-300 text-gray-800 hover:bg-gray-100" asChild>
             <Link href="/login">
@@ -176,11 +176,11 @@ const Navbar = () => {
               ))}
               <hr className="my-4" />
               <Link
-                href="/post-job"
-                className="py-3 px-4 bg-blue-600 text-white rounded-lg font-semibold text-center mb-2"
+                href="/employer/add-jobs"
+                className="py-3 px-4 bg-[#2b7fff] text-white rounded-lg font-semibold text-center mb-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Post a Job/Event
+                Post a Job
               </Link>
               <Link
                 href="/login"

@@ -208,12 +208,16 @@ export default function Home() {
                 <span className="font-semibold text-black text-sm">{grant.organization}</span>
               </div>
               <h3 className="font-bold text-lg mb-3 text-black tracking-tight leading-snug">{grant.title}</h3>
-              <div className="text-base text-gray-700 font-normal leading-relaxed mb-4">{grant.description}</div>
+              <div className="text-base text-gray-700 font-normal leading-relaxed mb-4">{truncateWords(grant.description, 45)}</div>
               <div className="text-xs text-gray-600 mb-6">Deadline: {grant.deadline ? new Date(grant.deadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A'}</div>
               <div className="flex-1 flex items-end">
-                <a href={grant.link || '#'} target="_blank" rel="noopener noreferrer" className="w-full">
-                  <button className="bg-[#2B7FFF] text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-[#1A5FCC] transition-colors w-full">Apply Now</button>
-                </a>
+                {grant.link ? (
+                  <a href={grant.link} target="_blank" rel="noopener noreferrer" className="w-full">
+                    <button className="bg-[#2B7FFF] text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-[#1A5FCC] transition-colors w-full">Apply Now</button>
+                  </a>
+                ) : (
+                  <button className="bg-[#2B7FFF] text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-[#1A5FCC] transition-colors w-full" disabled>Apply Now</button>
+                )}
               </div>
             </div>
           ))}

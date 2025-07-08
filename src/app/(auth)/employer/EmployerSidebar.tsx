@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { User, Briefcase, PlusCircle, Users, Star, Bell, Package, Calendar, Key, Trash2, LogOut, LayoutDashboard } from 'lucide-react';
+import { User, Briefcase, PlusCircle, Users, Star, Bell, Package, Calendar, Key, Trash2, LogOut, LayoutDashboard, FileText, Gift } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -9,6 +9,10 @@ const sidebarItems = [
   { label: 'Profile', icon: User, href: '/employer/profile' },
   { label: 'My Jobs', icon: Briefcase, href: '/employer/my-jobs' },
   { label: 'Submit Jobs', icon: PlusCircle, href: '/employer/submit-jobs' },
+  { label: 'Add Event', icon: Calendar, href: '/employer/add-event' },
+  { label: 'Add Grant', icon: Gift, href: '/employer/add-grant' },
+  { label: 'My Events', icon: Calendar, href: '/employer/my-events' },
+  { label: 'My Grants', icon: FileText, href: '/employer/my-grants' },
   { label: 'Applications', icon: Users, href: '/employer/applications' },
   { label: 'Shortlist Candidates', icon: Star, href: '/employer/shortlist-candidates' },
   { label: 'Candidate Alerts', icon: Bell, href: '/employer/candidate-alerts' },
