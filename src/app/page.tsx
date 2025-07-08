@@ -54,66 +54,6 @@ const eventCards = [
   },
 ];
 
-const fundingCards = [
-  {
-    org: 'Green Future Org',
-    logo: (
-      <Image
-        src="/images/download.jpeg"
-        alt="Green Future Org Logo"
-        width={48}
-        height={48}
-        className="rounded-md object-cover"
-      />
-    ),
-    tag: 'Grant',
-    tagColor: 'bg-yellow-200 text-yellow-800',
-    bg: 'bg-[#f3f6f3]',
-    title: 'Climate Action Grant',
-    desc: 'Supporting innovative projects addressing climate change and environmental sustainability.',
-    deadline: 'December 31, 2025',
-    button: 'Apply Now',
-  },
-  {
-    org: 'HealthGlobal Institute',
-    logo: (
-      <Image
-        src="/images/download.jpeg"
-        alt="HealthGlobal Institute Logo"
-        width={48}
-        height={48}
-        className="rounded-md object-cover"
-      />
-    ),
-    tag: 'Research',
-    tagColor: 'bg-orange-200 text-orange-800',
-    bg: 'bg-[#f3f6f3]',
-    title: 'Global Health Research Fund',
-    desc: 'Funding for researchers working on solutions to global health challenges and disease prevention.',
-    deadline: 'January 15, 2026',
-    button: 'Apply Now',
-  },
-  {
-    org: 'STEM4Her Foundation',
-    logo: (
-      <Image
-        src="/images/download.jpeg"
-        alt="STEM4Her Foundation Logo"
-        width={48}
-        height={48}
-        className="rounded-md object-cover"
-      />
-    ),
-    tag: 'Scholarship',
-    tagColor: 'bg-yellow-200 text-yellow-800',
-    bg: 'bg-[#f3f6f3]',
-    title: 'Women in STEM Scholarship',
-    desc: 'Supporting women pursuing degrees in science, technology, engineering, and mathematics fields.',
-    deadline: 'February 28, 2026',
-    button: 'Apply Now',
-  },
-];
-
 type EmployerCard = {
   id: number;
   name: string;
@@ -135,6 +75,14 @@ export default function Home() {
     if (category) params.append('category', category);
     router.push(`/jobs${params.toString() ? `?${params.toString()}` : ''}`);
   };
+
+  // Funding/Proposal section state
+  const [grants, setGrants] = useState<any[]>([]);
+  useEffect(() => {
+    fetch('/api/grants')
+      .then(res => res.json())
+      .then(data => setGrants(data));
+  }, []);
 
   return (
     <div className="w-full bg-[#F9FAFB] min-h-screen flex flex-col">
@@ -231,14 +179,14 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
           <div className="text-center sm:text-left mb-4 sm:mb-0">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[#1a2a3a] leading-snug">
-              Funding Opportunities
+              Funding / Proposal
             </h2>
             <p className="mt-2 text-sm sm:text-base text-gray-600">
             Discover the latest grants and funding opportunities for NGOs
             </p>
           </div>
           <a 
-            href="/funding" 
+            href="/grants" 
             className="inline-flex items-center gap-2 text-[#2B7FFF] font-semibold hover:underline text-sm sm:text-base whitespace-nowrap"
           >
             View All
@@ -248,20 +196,24 @@ export default function Home() {
           </a>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {fundingCards.map((fund, idx) => (
-            <div key={idx} className={`rounded-xl shadow p-6 flex flex-col min-h-[320px] ${fund.bg}`}> 
+          {grants.slice(0, 3).map((grant, idx) => (
+            <div key={grant.id || idx} className="rounded-xl shadow p-6 flex flex-col min-h-[320px] bg-[#f3f6f3]">
               <div className="flex flex-col gap-2 mb-4">
                 <div className="flex justify-between items-start">
-                  <span className="flex-shrink-0">{fund.logo}</span>
-                  <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${fund.tagColor}`}>{fund.tag}</span>
+                  <span className="flex-shrink-0">
+                    <Image src="/images/download.jpeg" alt={grant.organization || 'Org Logo'} width={48} height={48} className="rounded-md object-cover" />
+                  </span>
+                  <span className="inline-block px-2 py-1 rounded text-xs font-semibold bg-yellow-200 text-yellow-800">{grant.type}</span>
                 </div>
-                <span className="font-semibold text-black text-sm">{fund.org}</span>
+                <span className="font-semibold text-black text-sm">{grant.organization}</span>
               </div>
-              <h3 className="font-bold text-lg mb-3 text-black tracking-tight leading-snug">{fund.title}</h3>
-              <div className="text-base text-gray-700 font-normal leading-relaxed mb-4">{fund.desc}</div>
-              <div className="text-xs text-gray-600 mb-6">Deadline: {fund.deadline}</div>
+              <h3 className="font-bold text-lg mb-3 text-black tracking-tight leading-snug">{grant.title}</h3>
+              <div className="text-base text-gray-700 font-normal leading-relaxed mb-4">{grant.description}</div>
+              <div className="text-xs text-gray-600 mb-6">Deadline: {grant.deadline ? new Date(grant.deadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A'}</div>
               <div className="flex-1 flex items-end">
-                <button className="bg-[#2B7FFF] text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-[#1A5FCC] transition-colors w-full">{fund.button}</button>
+                <a href={grant.link || '#'} target="_blank" rel="noopener noreferrer" className="w-full">
+                  <button className="bg-[#2B7FFF] text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-[#1A5FCC] transition-colors w-full">Apply Now</button>
+                </a>
               </div>
             </div>
           ))}
@@ -269,6 +221,7 @@ export default function Home() {
       </section>
 
       {/* Blog Section */}
+/*
       <section className="w-full max-w-7xl mx-auto mb-12 px-4 sm:px-6 lg:px-8">
         <h2 className="text-2xl md:text-3xl font-bold text-[#1a2a3a] text-center mb-2"> Blog</h2>
         <p className="text-gray-600 text-base md:text-lg text-center mb-10">Weekly reads to help you learn, grow, and lead in the social sector.</p>
@@ -299,6 +252,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+*/
 
       {/* Popular Roles Section */}
       <section className="w-full max-w-7xl mx-auto mb-12 px-4 sm:px-6 lg:px-8">
@@ -509,7 +463,7 @@ function UpcomingEventsLiveCards() {
                   </span>
                 )}
               </div>
-              <a href={event.link || '#'} target="_blank" rel="noopener noreferrer">
+              <a href={`/events/${event.id}`}>
                 <button className="w-full bg-[#2B7FFF] text-white px-4 py-2.5 rounded-lg font-semibold text-sm hover:bg-[#1A5FCC] transition-colors">
                   View Details
                 </button>

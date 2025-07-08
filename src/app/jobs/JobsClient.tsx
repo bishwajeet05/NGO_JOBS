@@ -76,9 +76,11 @@ export default function JobsClient() {
       const searchQ = searchParams.get('search');
       const locationQ = searchParams.get('location');
       const categoryQ = searchParams.get('category');
+      const stateQ = searchParams.get('state');
       if (searchQ) setSearch(searchQ);
       if (locationQ) setLocation(locationQ);
       if (categoryQ) setCategory(categoryQ);
+      if (stateQ) setStateVal(stateQ);
     }
   }, [searchParams]);
 
